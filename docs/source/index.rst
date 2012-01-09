@@ -34,7 +34,7 @@ Requirements
 
 The :mod:`miRmap` library has the following requirements:
 
-1. :mod:`miRmap` requires Python_ 2.7 but it can be used with Python_ 2.6 if the :mod:`collections` modules is installed (A version compatible with Python_ 2.4-2.6 is available as the `ordereddict <http://pypi.python.org/pypi/ordereddict>`_ module.).
+1. :mod:`miRmap` requires Python_ 2.7 but it can be used with Python_ 2.6 if the :mod:`collections` module is installed (A version compatible with Python_ 2.4-2.6 is available as the `ordereddict <http://pypi.python.org/pypi/ordereddict>`_ module.).
 
 2. For the evolutionary features, the Python_ library :mod:`DendroPy` is needed for tree manipulation. You can install `DendroPy <http://pypi.python.org/pypi/DendroPy/>`_ directly from the `Python Package Index <http://pypi.python.org>`_.
 
