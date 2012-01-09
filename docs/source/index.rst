@@ -16,7 +16,7 @@ The :mod:`miRmap` library is a Python_ library predicting the repression strengt
 Download
 ========
 
-:mod:`miRmap` distribution is available http://cegg.unige.ch/mirmap/mirmap-1.0.tar.gz.
+:mod:`miRmap` distribution is available http://cegg.unige.ch/mirmap/miRmap-1.0.tar.gz.
 
 .. note::
 
@@ -74,9 +74,9 @@ From the directory you compiled the C libraries:
 
  ::
 
-  mv libspatt2/libspatt2.so mirmap/libs/compiled
-  mv ViennaRNA-1.8.5/lib/libRNAvienna.so mirmap/libs/compiled
-  mv phast2/lib/sharedlib/libphast.so mirmap/libs/compiled
+  mv libspatt2/libspatt2.so mirmap/libs/default
+  mv ViennaRNA-1.8.5/lib/libRNAvienna.so mirmap/libs/default
+  mv phast2/lib/sharedlib/libphast.so mirmap/libs/default
 
 Usage
 =====
