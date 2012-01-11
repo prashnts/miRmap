@@ -57,6 +57,11 @@ The :mod:`miRmap` library has the following requirements:
 
    svn co http://compgen.bscb.cornell.edu/svnrepo/phast/trunk phast
    cd phast/src
+
+  In the file *make-include.mk*, add the ``-DUSE_PHAST_MEMORY_HANDLER`` parameter to the line starting with ``CFLAGS += -I${INC} -DPHAST_VERSION=${PHAST_VERSION}``. Then replace the path to the CLAPACK_ and compile with:
+
+  ::
+
    make CLAPACKPATH=../CLAPACK-3.2.1 sharedlib
 
  - For the *P.over exact* feature, the `Spatt <http://stat.genopole.cnrs.fr/spatt>`_ library is required (You will need a working copy of `CMake <http://www.cmake.org>`_ on your system).
