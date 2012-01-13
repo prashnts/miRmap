@@ -42,11 +42,11 @@ The :mod:`miRmap` library has the following requirements:
 
  - For the thermodynamic features, the `Vienna RNA <http://www.tbi.univie.ac.at/RNA>`_ library is required.
 
-  Download the latest `Vienna package tarball <http://www.tbi.univie.ac.at/RNA/ViennaRNA-1.8.5.tar.gz>`_, then do:
+  Download the latest `Vienna RNA`_ tarball (Versions 1.8.x were successfully tested), then do:
 
   ::
 
-   cd ViennaRNA-1.8.5
+   cd ViennaRNA-<version>
    ./configure --without-kinfold --without-forester --without-svm --without-perl
    make
    gcc -shared -Wl,-O2 -o lib/libRNAvienna.so `find lib/ -name "*.o"` -lm
@@ -64,12 +64,13 @@ The :mod:`miRmap` library has the following requirements:
 
    make CLAPACKPATH=../CLAPACK-3.2.1 sharedlib
 
- - For the *P.over exact* feature, the `Spatt <http://stat.genopole.cnrs.fr/spatt>`_ library is required (You will need a working copy of `CMake <http://www.cmake.org>`_ on your system).
+ - For the *P.over exact* feature, the `Spatt <http://www.mi.parisdescartes.fr/~nuel/spatt>`_ library is required (You will need a working copy of `CMake <http://www.cmake.org>`_ on your system).
+
+  Download the latest Spatt_ tarball (Version 2.0 was successfully tested), then do:
 
   ::
 
-   git clone https://bitbucket.org/vejnar/spatt.git
-   cd spatt
+   cd spatt-<version>
    mkdir build
    cd build
    cmake -DWITH_SHARED_LIB=ON ..
@@ -79,9 +80,9 @@ From the directory you compiled the C libraries:
 
  ::
 
-  mv libspatt2/libspatt2.so mirmap/libs/default
-  mv ViennaRNA-1.8.5/lib/libRNAvienna.so mirmap/libs/default
-  mv phast2/lib/sharedlib/libphast.so mirmap/libs/default
+  mv spatt-<version>/libspatt2/libspatt2.so mirmap/libs/default
+  mv ViennaRNA-<version>/lib/libRNAvienna.so mirmap/libs/default
+  mv phast/lib/sharedlib/libphast.so mirmap/libs/default
 
 Usage
 =====
