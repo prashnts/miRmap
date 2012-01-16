@@ -25,25 +25,25 @@ class mmModel(seed.mmSeed):
                     if num_feats_largest_model < len(model.keys()):
                         num_feats_largest_model = len(model.keys())
             if hasattr(self, 'tgs_aus'):
-                slope_tgs_au = model=['slope_tgs_au']
+                slope_tgs_au = model['slope_tgs_au']
             if hasattr(self, 'tgs_positions'):
-                slope_tgs_position = model=['slope_tgs_position']
+                slope_tgs_position = model['slope_tgs_position']
             if hasattr(self, 'tgs_pairing3ps'):
-                slope_tgs_pairing3p = model=['slope_tgs_pairing3p']
+                slope_tgs_pairing3p = model['slope_tgs_pairing3p']
             if hasattr(self, 'dg_duplexs'):
-                slope_dg_duplex = model=['slope_dg_duplex']
+                slope_dg_duplex = model['slope_dg_duplex']
             if hasattr(self, 'dg_bindings'):
-                slope_dg_binding = model=['slope_dg_binding']
+                slope_dg_binding = model['slope_dg_binding']
             if hasattr(self, 'dg_opens'):
-                slope_dg_open = model=['slope_dg_open']
+                slope_dg_open = model['slope_dg_open']
             if hasattr(self, 'prob_exacts'):
-                slope_prob_exact = model=['slope_prob_exact']
+                slope_prob_exact = model['slope_prob_exact']
             if hasattr(self, 'prob_binomials'):
-                slope_prob_binomial = model=['slope_prob_binomial']
+                slope_prob_binomial = model['slope_prob_binomial']
             if hasattr(self, 'blss'):
-                slope_blss = model=['slope_blss']
+                slope_blss = model['slope_blss']
             if hasattr(self, 'phylops'):
-                slope_phylops = model=['slope_phylops']
+                slope_phylops = model['slope_phylops']
         # Reset
         self.scores = []
         # Compute
