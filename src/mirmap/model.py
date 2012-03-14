@@ -17,7 +17,7 @@ class mmModel(seed.mmSeed):
         if model_name is None:
             if model is None:
                 needed_slopes = []
-                for feat in ['tgs_aus', 'tgs_positions', 'tgs_pairing3ps', 'dg_duplexs', 'dg_bindings', 'dg_opens', 'prob_exacts', 'prob_binomials', 'blss', 'phylops']:
+                for feat in ['tgs_aus', 'tgs_positions', 'tgs_pairing3ps', 'dg_duplexs', 'dg_bindings', 'dg_opens', 'prob_exacts', 'prob_binomials', 'cons_blss', 'selec_phylops']:
                     if hasattr(self, feat):
                         needed_slopes.append('slope_'+feat[:-1])
                 num_feats_largest_model = 0
@@ -52,10 +52,10 @@ class mmModel(seed.mmSeed):
                 score += self.prob_exacts[its] * self.model['slope_prob_exact']
             if self.model.has_key('slope_prob_binomial'):
                 score += self.prob_binomials[its] * self.model['slope_prob_binomial']
-            if self.model.has_key('slope_bls'):
-                score += self.blss[its] * self.model['slope_bls']
-            if self.model.has_key('slope_phylop'):
-                score += self.phylops[its] * self.model['slope_phylop']
+            if self.model.has_key('slope_cons_bls'):
+                score += self.cons_blss[its] * self.model['slope_cons_bls']
+            if self.model.has_key('slope_selec_phylop'):
+                score += self.selec_phylops[its] * self.model['slope_selec_phylop']
             self.scores.append(score)
 
 class Defaults(object):
@@ -67,8 +67,8 @@ class Defaults(object):
     models['full']['slope_tgs_pairing3p'] = -2.175e-02
     models['full']['slope_dg_open'] = 3.384e-03
     models['full']['slope_prob_exact'] = 5.683e-01
-    models['full']['slope_bls'] = -3.526e-02
-    models['full']['slope_phylop'] = -8.838e-03
+    models['full']['slope_cons_bls'] = -3.526e-02
+    models['full']['slope_selec_phylop'] = -8.838e-03
     models['full']['intercept'] = 1.058e-02
     # Full model minus the conservation features
     models['full_minus_conservation'] = {}
