@@ -12,20 +12,25 @@
 import seed
 
 class mmModel(seed.mmSeed):
-    def eval_score(self, model=None):
+    def eval_score(self, model_name=None, model=None):
         # Parameter: if the user doesn't give anything, trying to find the most appropriate model in Defaults
-        if model is None:
-            needed_slopes = []
-            for feat in ['tgs_aus', 'tgs_positions', 'tgs_pairing3ps', 'dg_duplexs', 'dg_bindings', 'dg_opens', 'prob_exacts', 'prob_binomials', 'blss', 'phylops']:
-                if hasattr(self, feat):
-                    needed_slopes.append('slope_'+feat[:-1])
-            num_feats_largest_model = 0
-            for model_name,model_params in Defaults.models.items():
-                if len(set(model_params.keys()).intersection(set(needed_slopes))) == (len(model_params) - 1):
-                    if num_feats_largest_model < len(model_params.keys()):
-                        num_feats_largest_model = len(model_params.keys())
-                        #print(model_name)
-                        self.model = model_params
+        if model_name is None:
+            if model is None:
+                needed_slopes = []
+                for feat in ['tgs_aus', 'tgs_positions', 'tgs_pairing3ps', 'dg_duplexs', 'dg_bindings', 'dg_opens', 'prob_exacts', 'prob_binomials', 'blss', 'phylops']:
+                    if hasattr(self, feat):
+                        needed_slopes.append('slope_'+feat[:-1])
+                num_feats_largest_model = 0
+                for model_name,model_params in Defaults.models.items():
+                    if len(set(model_params.keys()).intersection(set(needed_slopes))) == (len(model_params) - 1):
+                        if num_feats_largest_model < len(model_params.keys()):
+                            num_feats_largest_model = len(model_params.keys())
+                            #print(model_name)
+                            self.model = model_params
+            else:
+                self.model = model
+        else:
+            self.model = Defaults.models[model_name]
         # Reset
         self.scores = []
         # Compute
