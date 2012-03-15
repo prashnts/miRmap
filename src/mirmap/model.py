@@ -97,3 +97,22 @@ class Defaults(object):
     models['targetscan']['slope_tgs_position'] = 0.0001234
     models['targetscan']['slope_tgs_pairing3p'] = -0.02573
     models['targetscan']['intercept'] = 0.1586
+    # All features model (6-mer seeds)
+    models['full_seed6'] = {}
+    models['full_seed6']['slope_tgs_au'] = -0.3385
+    models['full_seed6']['slope_tgs_position'] = 2.096e-05
+    models['full_seed6']['slope_tgs_pairing3p'] = 0.001641
+    models['full_seed6']['slope_dg_duplex'] = 0.01068
+    models['full_seed6']['slope_dg_binding'] = 0.001347
+    models['full_seed6']['slope_dg_open'] = 0.002046
+    models['full_seed6']['slope_prob_exact'] = 0.07565
+    models['full_seed6']['slope_prob_binomial'] = 0.02520
+    models['full_seed6']['slope_cons_bls'] = -0.007088
+    models['full_seed6']['slope_selec_phylop'] = -0.01912
+    models['full_seed6']['intercept'] = 0.2150
+    # TargetScan model (6-mer seeds)
+    models['targetscan_seed6'] = {}
+    models['targetscan_seed6']['slope_tgs_au'] = -0.3720
+    models['targetscan_seed6']['slope_tgs_position'] = 6.350e-05
+    models['targetscan_seed6']['slope_tgs_pairing3p'] = -0.01955
+    models['targetscan_seed6']['intercept'] = 0.1618
