@@ -43,7 +43,7 @@ class mmModel(seed.mmSeed):
             if self.model.has_key('slope_tgs_pairing3p'):
                 score += self.tgs_pairing3ps[its] * self.model['slope_tgs_pairing3p']
             if self.model.has_key('slope_dg_duplex'):
-                score += self.dg_duplexes[its] * self.model['slope_dg_duplex']
+                score += self.dg_duplexs[its] * self.model['slope_dg_duplex']
             if self.model.has_key('slope_dg_binding'):
                 score += self.dg_bindings[its] * self.model['slope_dg_binding']
             if self.model.has_key('slope_dg_open'):
@@ -60,21 +60,40 @@ class mmModel(seed.mmSeed):
 
 class Defaults(object):
     models = {}
-    # Full model (all features)
+    # All features model
     models['full'] = {}
-    models['full']['slope_tgs_au'] = -3.701e-01
-    models['full']['slope_tgs_position'] = 3.931e-05
-    models['full']['slope_tgs_pairing3p'] = -2.175e-02
-    models['full']['slope_dg_open'] = 3.384e-03
-    models['full']['slope_prob_exact'] = 5.683e-01
-    models['full']['slope_cons_bls'] = -3.526e-02
-    models['full']['slope_selec_phylop'] = -8.838e-03
-    models['full']['intercept'] = 1.058e-02
-    # Full model minus the conservation features
-    models['full_minus_conservation'] = {}
-    models['full_minus_conservation']['slope_tgs_au'] = -4.246e-01
-    models['full_minus_conservation']['slope_tgs_position'] = 5.083e-05
-    models['full_minus_conservation']['slope_tgs_pairing3p'] = -2.350e-02
-    models['full_minus_conservation']['slope_dg_open'] = 3.812e-03
-    models['full_minus_conservation']['slope_prob_exact'] = 4.856e-01
-    models['full_minus_conservation']['intercept'] = -2.872e-02
+    models['full']['slope_tgs_au'] = -0.4119
+    models['full']['slope_tgs_position'] = 5.088e-05
+    models['full']['slope_tgs_pairing3p'] = -0.01050
+    models['full']['slope_dg_duplex'] = 0.009900
+    models['full']['slope_dg_binding'] = -0.002919
+    models['full']['slope_dg_open'] = 0.003914
+    models['full']['slope_prob_exact'] = 1.022
+    models['full']['slope_prob_binomial'] = -0.3582
+    models['full']['slope_cons_bls'] = -0.03431
+    models['full']['slope_selec_phylop'] = -0.009622
+    models['full']['intercept'] = 0.08088
+    # 7-main features model
+    models['7main'] = {}
+    models['7main']['slope_tgs_au'] = -3.701e-01
+    models['7main']['slope_tgs_position'] = 3.931e-05
+    models['7main']['slope_tgs_pairing3p'] = -2.175e-02
+    models['7main']['slope_dg_open'] = 3.384e-03
+    models['7main']['slope_prob_exact'] = 5.683e-01
+    models['7main']['slope_cons_bls'] = -3.526e-02
+    models['7main']['slope_selec_phylop'] = -8.838e-03
+    models['7main']['intercept'] = 1.058e-02
+    # 7-main features model minus the conservation features
+    models['7main_minus_conservation'] = {}
+    models['7main_minus_conservation']['slope_tgs_au'] = -4.246e-01
+    models['7main_minus_conservation']['slope_tgs_position'] = 5.083e-05
+    models['7main_minus_conservation']['slope_tgs_pairing3p'] = -2.350e-02
+    models['7main_minus_conservation']['slope_dg_open'] = 3.812e-03
+    models['7main_minus_conservation']['slope_prob_exact'] = 4.856e-01
+    models['7main_minus_conservation']['intercept'] = -2.872e-02
+    # TargetScan model
+    models['targetscan'] = {}
+    models['targetscan']['slope_tgs_au'] = -0.5368
+    models['targetscan']['slope_tgs_position'] = 0.0001234
+    models['targetscan']['slope_tgs_pairing3p'] = -0.02573
+    models['targetscan']['intercept'] = 0.1586
