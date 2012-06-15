@@ -61,10 +61,12 @@ def main(argv=None):
     group.add_argument('-m', '--mirna', dest='mirna_seqs', action='append', help='miRNA sequence')
     parser.add_argument('-n', '--mirna-id', dest='mirna_ids', action='append', help='miRNA IDs')
     group.add_argument('-a', '--mirna-fasta', dest='mirna_fname_fasta', action='store', help='miRNA Fasta file')
+    group.add_argument('-b', '--mirna-tab', dest='mirna_fname_tab', action='store', help='miRNA tabulated file')
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('-t', '--transcript', dest='transcript_seqs', action='append', help='Transcript sequence')
     parser.add_argument('-u', '--transcript-id', dest='transcript_ids', action='append', help='Transcript IDs')
     group.add_argument('-f', '--transcript-fasta', dest='transcript_fname_fasta', action='store', help='Transcript Fasta file')
+    group.add_argument('-c', '--transcript-tab', dest='transcript_fname_tab', action='store', help='Transcript tabulated file')
     parser.add_argument('-l', '--library', dest='library_path', action='store', help='External C libraries path')
     parser.add_argument('-s', '--aln', dest='aln_path', action='store', help='Multiple sequences alignment(s) path')
     parser.add_argument('-d', '--mod', dest='mod_path', action='store', help='Model(s) path')
@@ -104,6 +106,9 @@ def main(argv=None):
             for mid in mirnas.keys():
                 if mid not in args.mirna_ids:
                     del mirnas[mid]
+    elif args.mirna_fname_tab:
+        with open(args.mirna_fname_tab) as f:
+            mirnas = dict([l.rstrip().split('\t') for l in f])
     else:
         if args.mirna_ids:
             mirnas = {}
@@ -117,6 +122,9 @@ def main(argv=None):
             for tid in transcripts.keys():
                 if tid not in args.transcript_ids:
                     del transcripts[tid]
+    elif args.transcript_fname_tab:
+        with open(args.transcript_fname_tab) as f:
+            transcripts = dict([l.rstrip().split('\t') for l in f])
     else:
         if args.transcript_ids:
             transcripts = {}
