@@ -29,7 +29,7 @@ def get_pairing_string(pairing):
     return string
 
 class mmThermo(seed.mmSeed):
-    def eval_dg_duplex(self, librna=None, mirna_start_pairing=None):
+    def eval_dg_duplex(self, librna=None, mirna_start_pairing=None, temperature=None):
         """Computes the *ΔG duplex* and *ΔG binding* scores.
 
            :param librna: Link to the Vienna RNA library.
@@ -41,6 +41,10 @@ class mmThermo(seed.mmSeed):
             librna = self.libs.get_library_link('rna')
         if mirna_start_pairing is None:
             mirna_start_pairing = Defaults.mirna_start_pairing
+        if temperature is None:
+            librna.set_temperature(Defaults.temperature)
+        else:
+            librna.set_temperature(temperature)
         # Reset
         self.dg_duplexs = []
         self.dg_duplex_foldings = []
@@ -67,7 +71,7 @@ class mmThermo(seed.mmSeed):
             librna.free_co_pf_arrays()
             self.dg_bindings.append(pffold.FcAB - pffold.FA - pffold.FB)
 
-    def eval_dg_open(self, librna=None, upstream_rest=None, downstream_rest=None, dg_binding_area=None):
+    def eval_dg_open(self, librna=None, upstream_rest=None, downstream_rest=None, dg_binding_area=None, temperature=None):
         """Computes the *ΔG open* score.
 
            :param librna: Link to the Vienna RNA library.
@@ -87,6 +91,10 @@ class mmThermo(seed.mmSeed):
             downstream_rest = Defaults.downstream_rest
         if dg_binding_area is None:
             dg_binding_area = Defaults.dg_binding_area
+        if temperature is None:
+            librna.set_temperature(Defaults.temperature)
+        else:
+            librna.set_temperature(temperature)
         # Reset
         self.dg_opens = []
         # Compute
@@ -176,6 +184,7 @@ class mmThermo(seed.mmSeed):
         return self._dg_total
 
 class Defaults(object):
+    temperature = 37.
     mirna_start_pairing = 2
     upstream_rest = 10
     downstream_rest = 15
