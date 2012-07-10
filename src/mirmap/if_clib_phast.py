@@ -277,4 +277,3 @@ class Phast(object):
         else:
             self.clean_phylop(p)
         return pval
-

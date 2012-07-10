@@ -59,4 +59,3 @@ def reverse_complement(seq):
         ttable = string.maketrans("ACGTacgt", "TGCAtgca")
     seq = seq[-1::-1].translate(ttable)
     return seq
-

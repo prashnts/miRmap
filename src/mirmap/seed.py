@@ -9,7 +9,7 @@
 
 """Target site identification by seed search."""
 
-import utils
+from . import utils
 
 def is_gu_wobble(b1, b2):
     """Check if 2 nts are a GU wobble if the first sequence was reverse complemented"""
@@ -136,4 +136,3 @@ class Defaults(object):
     allowed_mismatches = {6:0, 7:0, 8:0}
     take_best = True
     motif_def = 'seed'
-

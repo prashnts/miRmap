@@ -9,9 +9,9 @@
 
 """C libraries for miRmap."""
 
-import if_clib_rna
-import if_clib_spatt
-import if_clib_phast
+from . import if_clib_rna
+from . import if_clib_spatt
+from . import if_clib_phast
 
 class LibraryLink(object):
     def __init__(self, library_path=None):
@@ -37,4 +37,3 @@ class LibraryLink(object):
         except KeyError:
             self.init_library_link(library_short_name)
             return self.libs[library_short_name]
-

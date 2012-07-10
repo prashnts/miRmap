@@ -11,7 +11,7 @@
 
 import math
 
-import seed
+from . import seed
 
 def get_pairing_string(pairing):
     """Returns the pairing with the dots and brackets notation"""
@@ -189,4 +189,3 @@ class Defaults(object):
     upstream_rest = 10
     downstream_rest = 15
     dg_binding_area = 70
-

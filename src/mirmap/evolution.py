@@ -14,8 +14,8 @@ import copy
 
 import dendropy
 
-import seed
-import utils
+from . import seed
+from . import utils
 
 def get_coord_vec(seq, alphabet, shift=None):
     # By default, coordinates are 1-based
@@ -267,4 +267,3 @@ class Defaults(object):
     mode = 'CONACC'
     #
     aln_alphabet = ['A', 'T', 'C', 'G']
-

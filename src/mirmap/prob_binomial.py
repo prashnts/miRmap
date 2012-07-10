@@ -9,8 +9,8 @@
 
 """Probability based on binomial distribution feature."""
 
-import seed
-import prob
+from . import seed
+from . import prob
 
 def factorial(n):
     if n < 2: return 1
@@ -81,4 +81,3 @@ class mmProbBinomial(seed.mmSeed):
 
 class Defaults(object):
     markov_order = 1
-

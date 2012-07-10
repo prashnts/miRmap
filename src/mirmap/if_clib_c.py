@@ -83,4 +83,3 @@ class InMemoryFile(object):
     @property
     def file(self):
         return self._file
-

@@ -9,7 +9,7 @@
 
 """Basic functions for probability features: Transitions matrix, motif probability..."""
 
-import utils
+from . import utils
 
 def permutations(items, n):
     if n == 0:
@@ -48,4 +48,3 @@ def prob_motif(motif, alphabet, markov_order, transitions):
     for i in range(len(motif) - markov_order):
         prob *= transitions[motifs_index[motif[i:i+markov_order+1]]]
     return prob
-

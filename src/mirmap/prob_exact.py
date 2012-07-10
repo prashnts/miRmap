@@ -9,9 +9,9 @@
 
 """Probability based on exact distribution feature."""
 
-import seed
-import prob
-import utils
+from . import seed
+from . import prob
+from . import utils
 
 class mmProbExact(seed.mmSeed):
     def eval_prob_exact(self, libspatt=None, markov_order=None, alphabet=None, transitions=None, motif_def=None, motif_upstream_extension=None, motif_downstream_extension=None):
@@ -69,4 +69,3 @@ class mmProbExact(seed.mmSeed):
 
 class Defaults(object):
     markov_order = 1
-

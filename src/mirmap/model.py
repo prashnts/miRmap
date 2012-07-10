@@ -9,7 +9,7 @@
 
 """miRmap module"""
 
-import seed
+from . import seed
 
 class mmModel(seed.mmSeed):
     def eval_score(self, model_name=None, model=None):

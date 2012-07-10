@@ -39,4 +39,3 @@ class Spatt(object):
     def get_exact_prob(self, motif, nobs, length_seq, alphabet, transitions, markov_order, direction):
         ctransitions = self.transitions_l2c(transitions)
         return self._library.spatt_exact(''.join(alphabet), motif, cast(ctransitions, POINTER(c_double)), markov_order, False, nobs, length_seq, direction)
-

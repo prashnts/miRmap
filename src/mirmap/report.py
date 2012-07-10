@@ -9,7 +9,7 @@
 
 """Reporting methods."""
 
-import seed
+from . import seed
 
 def get_mirna_pairing_string(pairing):
     """Returns the pairing with the dots and pipes notation"""
@@ -84,4 +84,3 @@ class mmReport(seed.mmSeed):
             except AttributeError:
                 pass
         return '\n'.join(report_lines)
-

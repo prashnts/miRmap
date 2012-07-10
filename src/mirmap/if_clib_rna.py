@@ -146,4 +146,3 @@ class RNAvienna(object):
 
     def space(self, size):
         return self._library.space(size)
-
