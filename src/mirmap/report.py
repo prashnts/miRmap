@@ -36,51 +36,51 @@ class mmReport(seed.mmSeed):
             report_lines.append(' ' * (end_site - len(seed_pairing_string) - start) + seed_pairing_string)
             report_lines.append(' ' * (end_site - self.len_mirna_seq - start) + self.mirna_seq[::-1])
             try:
-                report_lines.append('  %-30s% .5f'%(u'ΔG duplex (kcal/mol)', self.dg_duplexs[its]))
+                report_lines.append('  %-30s% .5f'%('ΔG duplex (kcal/mol)', self.dg_duplexs[its]))
             except AttributeError:
                 pass
             try:
-                report_lines.append('  %-30s% .5f'%(u'ΔG binding (kcal/mol)', self.dg_bindings[its]))
+                report_lines.append('  %-30s% .5f'%('ΔG binding (kcal/mol)', self.dg_bindings[its]))
             except AttributeError:
                 pass
             try:
-                report_lines.append('  %-30s% .5f'%(u'ΔG open (kcal/mol)', self.dg_opens[its]))
+                report_lines.append('  %-30s% .5f'%('ΔG open (kcal/mol)', self.dg_opens[its]))
             except AttributeError:
                 pass
             try:
-                report_lines.append('  %-30s% .5f'%(u'ΔG total (kcal/mol)', self.dg_totals[its]))
+                report_lines.append('  %-30s% .5f'%('ΔG total (kcal/mol)', self.dg_totals[its]))
             except AttributeError:
                 pass
             try:
-                report_lines.append('  %-30s% .5f'%(u'AU content', self.tgs_aus[its]))
+                report_lines.append('  %-30s% .5f'%('AU content', self.tgs_aus[its]))
             except AttributeError:
                 pass
             try:
-                report_lines.append('  %-30s% .5f'%(u'UTR position', self.tgs_positions[its]))
+                report_lines.append('  %-30s% .5f'%('UTR position', self.tgs_positions[its]))
             except AttributeError:
                 pass
             try:
-                report_lines.append('  %-30s% .5f'%(u'3\' pairing', self.tgs_pairing3ps[its]))
+                report_lines.append('  %-30s% .5f'%('3\' pairing', self.tgs_pairing3ps[its]))
             except AttributeError:
                 pass
             try:
-                report_lines.append('  %-30s% .5f'%(u'TargetScan score', self.tgs_scores[its]))
+                report_lines.append('  %-30s% .5f'%('TargetScan score', self.tgs_scores[its]))
             except AttributeError:
                 pass
             try:
-                report_lines.append('  %-30s% .5f'%(u'Probability (Exact)', self.prob_exacts[its]))
+                report_lines.append('  %-30s% .5f'%('Probability (Exact)', self.prob_exacts[its]))
             except AttributeError:
                 pass
             try:
-                report_lines.append('  %-30s% .5f'%(u'Probability (Binomial)', self.prob_binomials[its]))
+                report_lines.append('  %-30s% .5f'%('Probability (Binomial)', self.prob_binomials[its]))
             except AttributeError:
                 pass
             try:
-                report_lines.append('  %-30s% .5f'%(u'Conservation (BLS)', self.cons_blss[its]))
+                report_lines.append('  %-30s% .5f'%('Conservation (BLS)', self.cons_blss[its]))
             except AttributeError:
                 pass
             try:
-                report_lines.append('  %-30s% .5f'%(u'Conservation (PhyloP)', self.selec_phylops[its]))
+                report_lines.append('  %-30s% .5f'%('Conservation (PhyloP)', self.selec_phylops[its]))
             except AttributeError:
                 pass
         return '\n'.join(report_lines)
