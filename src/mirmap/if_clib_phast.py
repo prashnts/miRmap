@@ -13,7 +13,7 @@ import os
 
 from ctypes import *
 
-import if_clib_c
+from . import if_clib_c
 
 # Classes for structures
 
