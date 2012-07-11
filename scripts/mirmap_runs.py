@@ -72,10 +72,11 @@ def main(argv=None):
     parser.add_argument('-d', '--mod', dest='mod_path', action='store', help='Model(s) path')
     parser.add_argument('-o', '--output', dest='output_fname', action='store', default='-', help='Worker(s)')
     parser.add_argument('-w', '--workers', dest='num_worker', action='store', type=int, default=1, help='Worker(s)')
+    parser.add_argument('-g', '--logging-level', dest='logging_level', action='store', default='debug', help='Logging level')
     args = parser.parse_args(argv[1:])
 
     # Logging
-    logger = mylog.define_root_logger('mirmap', level='debug')
+    logger = mylog.define_root_logger('mirmap', level=args.logging_level)
     logger.debug('Starting on %s'%(socket.gethostname()))
 
     # Paths
