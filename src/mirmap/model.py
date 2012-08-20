@@ -75,6 +75,15 @@ class Defaults(object):
     models['full']['slope_cons_bls'] = -0.03431
     models['full']['slope_selec_phylop'] = -0.009622
     models['full']['intercept'] = 0.08088
+    # 6-main features model
+    models['6main'] = {}
+    models['6main']['slope_tgs_au'] = -0.374916394988515
+    models['6main']['slope_tgs_position'] = 4.32491567764873e-05
+    models['6main']['slope_tgs_pairing3p'] = -0.0142311800727794
+    models['6main']['slope_dg_total'] = 0.00457689691424624
+    models['6main']['slope_prob_exact'] = 0.59324652766238
+    models['6main']['slope_cons_bls'] = -0.0501060580011392
+    models['6main']['intercept'] = 0.0358769265996316
     # 7-main features model
     models['7main'] = {}
     models['7main']['slope_tgs_au'] = -3.701e-01
