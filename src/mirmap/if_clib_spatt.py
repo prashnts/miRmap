@@ -7,7 +7,7 @@
 # See /LICENSE for more information.
 #
 
-"""Ctypes interface classes with the `Spatt <http://stat.genopole.cnrs.fr/spatt>`_ C library."""
+"""Ctypes interface classes with the `Spatt <http://www.mi.parisdescartes.fr/~nuel/spatt>`_ C library."""
 
 import os
 
