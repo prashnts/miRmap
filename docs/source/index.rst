@@ -16,15 +16,11 @@ The :mod:`miRmap` library is a Python_ library predicting the repression strengt
 Download
 ========
 
-:mod:`miRmap` distribution is available http://cegg.unige.ch/mirmap/miRmap-1.0.tar.gz.
+The stable releases of :mod:`miRmap` are available at http://cegg.unige.ch/mirmap.
 
 .. note::
 
-   **To the reviewers.**
-   
-    This section is temporary.
-   
-   After acceptance of the article, we will open the public repository hosted on BitBucket http://dev.vejnar.org/mirmap. The source code will be separated from the binaries. Features of BitBuket, including bugs and issues trackings, wiki, etc... will be available at the same time.
+ Development versions are available at http://dev.vejnar.org/mirmap.
 
 Installation
 ============
