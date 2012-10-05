@@ -1,5 +1,5 @@
-miRmap --- Comprehensive prediction of microRNA target repression strength
-==========================================================================
+miRmap - Comprehensive prediction of microRNA target repression strength
+========================================================================
 
 The `miRmap` library is a Python library predicting the repression strength of microRNA (miRNA) targets. The model combines thermodynamic, evolutionary, probabilistic, or sequence-based approaches.
 
