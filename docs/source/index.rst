@@ -38,14 +38,14 @@ The :mod:`miRmap` library has the following requirements:
 
  - For the thermodynamic features, the `Vienna RNA <http://www.tbi.univie.ac.at/RNA>`_ library is required.
 
-  Download the latest `Vienna RNA`_ tarball (Versions 1.8.x were successfully tested), then do:
+  Download the latest `Vienna RNA`_ tarball (Versions 2.0.x were successfully tested), then do:
 
   ::
 
    cd ViennaRNA-<version>
    ./configure --without-kinfold --without-forester --without-svm --without-perl
    make
-   gcc -shared -Wl,-O2 -o lib/libRNAvienna.so `find lib/ -name "*.o"` -lm
+   gcc -shared -Wl,-O2 -o lib/libRNAvienna.so `find lib/ -name "*.o"` -lm -lgomp
 
  - For the evolutionary features, the `PHAST <http://compgen.bscb.cornell.edu/phast>`_ library is required (The `CLAPACK <http://www.netlib.org/clapack>`_ has to be compiled first, please follow the instructions in Phast package).
 
