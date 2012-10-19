@@ -9,6 +9,7 @@
 
 """Ctypes interface classes with the `Vienna RNA <http://www.tbi.univie.ac.at/RNA>`_ C library."""
 
+import math
 import os
 
 from ctypes import *
@@ -60,6 +61,8 @@ class RNAvienna(object):
         self._library.pf_unstru.restype = POINTER(PU_CONTRIB)
         self._library.space.argtypes = [c_int]
         self._library.space.restype = c_void_p
+        self._library.mean_bp_distance.argtypes = [c_int]
+        self._library.mean_bp_distance.restype = c_double
         # - part_func_co.h
         self._library.co_pf_fold.argtypes = [c_char_p, c_char_p]
         self._library.co_pf_fold.restype = COFOLDF
@@ -67,9 +70,6 @@ class RNAvienna(object):
         self._library.free_co_pf_arrays.restype = None
         self._library.init_co_pf_fold.argtypes = [c_int]
         self._library.init_co_pf_fold.restype = None
-
-    def fold(self, seq, struc_buffer):
-        return self._library.fold(seq, struc_buffer)
 
     def lfold(self, seq, struc_buffer, maxdist):
         return self._library.Lfold(seq, struc_buffer, maxdist)
@@ -98,9 +98,6 @@ class RNAvienna(object):
 
     def free_pf_arrays(self):
         self._library.free_pf_arrays()
-
-    def cofold(self, seq, struc_buffer):
-        return self._library.cofold(seq, struc_buffer)
 
     def free_co_pf_arrays(self):
         self._library.free_co_pf_arrays()
@@ -146,3 +143,57 @@ class RNAvienna(object):
 
     def space(self, size):
         return self._library.space(size)
+
+    def fold(self, seq, constraints=None, partfunc=False, temperature=None):
+        if temperature is not None:
+            self.set_temperature(temperature)
+        # Structure buffer
+        struc_buffer = self.get_string_buffer(len(seq) + 1)
+        if constraints is not None:
+            self.set_fold_constrained(1)
+            struc_buffer.value = constraints
+        # Folding
+        result = {}
+        result['mfe'] = self._library.fold(seq, struc_buffer)
+        result['mfe_structure'] = struc_buffer.value
+        # Partition function
+        if partfunc:
+            self._library.init_pf_fold(len(seq))
+            if constraints is not None:
+                struc_buffer.value = constraints
+            pffold = self._library.pf_fold(seq, struc_buffer)
+            self._library.free_pf_arrays()
+            kT = ((temperature + 273.15) * 1.98717) / 1000.
+            result['efe_structure'] = struc_buffer.value
+            result['efe'] = pffold
+            result['mfe_frequency'] = math.exp((pffold - result['mfe']) / kT)
+        return result
+
+    def cofold(self, seq1, seq2, constraints=None, partfunc=False, temperature=None):
+        if temperature is not None:
+            self.set_temperature(temperature)
+        # Structure buffer
+        struc_buffer = self.get_string_buffer(len(seq1) + len(seq2) + 1)
+        if constraints is not None:
+            self.set_fold_constrained(1)
+            struc_buffer.value = constraints
+        # Set cut-point
+        cut_point = len(seq1) + 1
+        self.set_cut_point(cut_point)
+        # Folding
+        result = {}
+        result['mfe'] = self._library.cofold(seq1+seq2, struc_buffer)
+        result['mfe_structure'] = struc_buffer.value[:cut_point-1] + '&' + struc_buffer.value[cut_point-1:]
+        # Partition function
+        if partfunc:
+            self._library.init_co_pf_fold(len(seq1) + len(seq2))
+            if constraints is not None:
+                struc_buffer.value = constraints
+            pffold = self._library.co_pf_fold(seq1+seq2, struc_buffer)
+            self._library.free_co_pf_arrays()
+            kT = ((temperature + 273.15) * 1.98717) / 1000.
+            result['efe_structure'] = struc_buffer.value[:cut_point-1] + '&' + struc_buffer.value[cut_point-1:]
+            result['efe'] = pffold.FAB
+            result['mfe_frequency'] = math.exp((pffold.FAB - result['mfe']) / kT)
+            result['efe_binding'] = pffold.FcAB - pffold.FA - pffold.FB
+        return result

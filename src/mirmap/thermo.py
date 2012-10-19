@@ -11,6 +11,7 @@
 
 import math
 
+from . import if_exe_rna
 from . import seed
 
 def get_pairing_string(pairing):
@@ -29,62 +30,72 @@ def get_pairing_string(pairing):
     return string
 
 class mmThermo(seed.mmSeed):
-    def eval_dg_duplex(self, librna=None, mirna_start_pairing=None, temperature=None):
+    def eval_dg_duplex(self, librna=None, pathrna=None, mirna_start_pairing=None, temperature=None):
         """Computes the *ΔG duplex* and *ΔG binding* scores.
 
            :param librna: Link to the Vienna RNA library.
            :type librna: :class:`LibraryLink`
+           :param pathrna: Path to the Vienna RNA executable.
+           :type pathrna: str
            :param mirna_start_pairing: Starting position of the seed in the miRNA (from the 5').
-           :type mirna_start_pairing: int"""
+           :type mirna_start_pairing: int
+           :param temperature: Folding temperature.
+           :type temperature: float"""
         # Parameters
-        if librna is None:
-            librna = self.libs.get_library_link('rna')
+        if pathrna is not None:
+            if_rna = if_exe_rna.RNAvienna(pathrna)
+        elif librna is not None:
+            if_rna = librna
+        elif hasattr(self, 'libs') and 'rna' in self.libs.libs:
+            if_rna = self.libs.get_library_link('rna')
+        else:
+            if_rna = if_exe_rna.RNAvienna()
         if mirna_start_pairing is None:
             mirna_start_pairing = Defaults.mirna_start_pairing
         if temperature is None:
-            librna.set_temperature(Defaults.temperature)
-        else:
-            librna.set_temperature(temperature)
+            temperature = Defaults.temperature
         # Reset
         self.dg_duplexs = []
         self.dg_duplex_foldings = []
         self.dg_bindings = []
         # Compute
         for its in range(len(self.end_sites)):
-            # Concatenated nucleotide sequences
-            concat_seq = self.target_seq[self.end_sites[its] - self.min_target_length : self.end_sites[its]] + self.mirna_seq
+            # Target site binding sequence
+            target_site_seq = self.target_seq[self.end_sites[its] - self.min_target_length : self.end_sites[its]]
             # Constraint sequence
             len_no_constraints = self.min_target_length - self.seed_lengths[its] - (mirna_start_pairing - 1)
             constraints_seq = '.' * len_no_constraints + get_pairing_string(self.pairings[its]) + '.' * len_no_constraints
-            # Init. library
-            struc_buffer = librna.get_string_buffer(self.min_target_length * 2 + 1)
-            struc_buffer.value = constraints_seq
-            librna.set_fold_constrained(1)
-            librna.set_cut_point(self.min_target_length + 1)
-            # Computing MFE
-            self.dg_duplexs.append(librna.cofold(concat_seq, struc_buffer))
-            self.dg_duplex_foldings.append(struc_buffer.value)
-            # Computing deltaG binding
-            librna.init_co_pf_fold(len(concat_seq))
-            struc_buffer.value = constraints_seq
-            pffold = librna.co_pf_fold(concat_seq, struc_buffer)
-            librna.free_co_pf_arrays()
-            self.dg_bindings.append(pffold.FcAB - pffold.FA - pffold.FB)
+            # Co-folding
+            result = if_rna.cofold(target_site_seq, self.mirna_seq, constraints=constraints_seq, partfunc=True, temperature=temperature)
+            self.dg_duplexs.append(result['mfe'])
+            self.dg_duplex_foldings.append(result['mfe_structure'])
+            self.dg_bindings.append(result['efe_binding'])
+            print result
 
-    def eval_dg_open(self, librna=None, upstream_rest=None, downstream_rest=None, dg_binding_area=None, temperature=None):
+    def eval_dg_open(self, librna=None, pathrna=None, upstream_rest=None, downstream_rest=None, dg_binding_area=None, temperature=None):
         """Computes the *ΔG open* score.
 
            :param librna: Link to the Vienna RNA library.
            :type librna: :class:`LibraryLink`
+           :param pathrna: Path to the Vienna RNA executable.
+           :type pathrna: str
            :param upstream_rest: Upstream unfolding length.
            :type upstream_rest: int
            :param downstream_rest: Downstream unfolding length.
            :type downstream_rest: int
            :param dg_binding_area: Supplementary sequence length to fold (applied twice: upstream and downstream).
-           :type dg_binding_area: int"""
+           :type dg_binding_area: int
+           :param temperature: Folding temperature.
+           :type temperature: float"""
         # Parameters
-        if librna is None:
-            librna = self.libs.get_library_link('rna')
+        if pathrna is not None:
+            if_rna = if_exe_rna.RNAvienna(pathrna)
+        elif librna is not None:
+            if_rna = librna
+        elif hasattr(self, 'libs') and 'rna' in self.libs.libs:
+            if_rna = self.libs.get_library_link('rna')
+        else:
+            if_rna = if_exe_rna.RNAvienna()
         if upstream_rest is None:
             upstream_rest = Defaults.upstream_rest
         if downstream_rest is None:
@@ -92,9 +103,7 @@ class mmThermo(seed.mmSeed):
         if dg_binding_area is None:
             dg_binding_area = Defaults.dg_binding_area
         if temperature is None:
-            librna.set_temperature(Defaults.temperature)
-        else:
-            librna.set_temperature(temperature)
+            temperature = Defaults.temperature
         # Reset
         self.dg_opens = []
         # Compute
@@ -120,22 +129,15 @@ class mmThermo(seed.mmSeed):
                 end_dg_open_targetseq = end_theoretic
                 len_polya_downstream = 0
             seq_for_dg_open = len_polya_upstream * 'A' + self.target_seq[start_dg_open_targetseq - 1 : end_dg_open_targetseq] + len_polya_downstream * 'A'
-            # Constraints
+            # Constraint sequences
             constraints_seq = '.' * dg_binding_area + 'x' * (upstream_rest + self.min_target_length + downstream_rest) + '.' * dg_binding_area
-            struc_buffer = librna.get_string_buffer(len_dg_open_seq + 1)
+            # Folding
             # dg0
-            librna.set_fold_constrained(0)
-            librna.init_pf_fold(len_dg_open_seq)
-            dg0 = librna.pf_fold(seq_for_dg_open, struc_buffer)
-            librna.free_pf_arrays()
+            result_dg0 = if_rna.fold(seq_for_dg_open, partfunc=True, temperature=temperature)
             # dg1
-            librna.set_fold_constrained(1)
-            struc_buffer.value = constraints_seq
-            librna.init_pf_fold(len_dg_open_seq)
-            dg1 = librna.pf_fold(seq_for_dg_open, struc_buffer)
-            librna.free_pf_arrays()
+            result_dg1 = if_rna.fold(seq_for_dg_open, constraints=constraints_seq, partfunc=True, temperature=temperature)
             # dg_open
-            self.dg_opens.append(dg1 - dg0)
+            self.dg_opens.append(result_dg1['efe'] - result_dg0['efe'])
 
     def eval_dg_total(self):
         """Computes the *ΔG total* score combining *ΔG duplex* and *ΔG open* scores."""
