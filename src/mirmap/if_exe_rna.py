@@ -57,21 +57,3 @@ class RNAvienna(object):
             else:
                 result[k] = float(v)
         return result
-
-if 1 == 0:
-    sequence = 'ACUCGGGUAGCGCGUACGCGGCGUAGCGCAUC'
-    cons =     '(..............................)'
-    rc = RNAvienna(exe_path='/home/cegg/vejnar/tmp/ViennaRNA-2.0.7/Progs/')
-    folding = rc.fold(sequence, cons)
-    print folding
-    #folding = rc.fold(sequence, partfunc=True)
-    #print folding
-
-    sequence1 = 'UUGUGACUGUCACUUGCUGCUUUAGCAGCACGUAAAUAUUGGCG'
-    cons = ['..............(((((((.', '.)))))))..............']
-    seq1 = 'UUGUGACUGUCACUUGCUGCUU'
-    seq2 = 'UAGCAGCACGUAAAUAUUGGCG'
-    folding = rc.fold([seq1, seq2], cons)
-    print folding
-    folding = rc.fold([seq1, seq2], cons, partfunc=True)
-    print folding
