@@ -256,7 +256,7 @@ class mmEvolution(seed.mmSeed):
         """Branch Length Score (*BLS*) with default parameters."""
         if hasattr(self, 'cons_blss') is False:
             self.eval_cons_bls()
-        self._cons_bls = sum(self._cons_blss) / float(len(self._cons_blss))
+        self._cons_bls = sum(self.cons_blss) / float(len(self.cons_blss))
         return self._cons_bls
 
     @property
@@ -264,7 +264,7 @@ class mmEvolution(seed.mmSeed):
         """*PhyloP* score with default parameters."""
         if hasattr(self, 'selec_phylops') is False:
             self.eval_selec_phylop()
-        self._selec_phylop = sum(self._selec_phylops) / float(len(self._selec_phylops))
+        self._selec_phylop = sum(self.selec_phylops) / float(len(self.selec_phylops))
         return self._selec_phylop
 
 class Defaults(object):
