@@ -216,14 +216,15 @@ class Phast(object):
         # Call phyloFit
         self._library.run_phyloFit(f)
         # Output
+        result = {}
         trees = self._library.lol_find_list(f.contents.results, 'tree', self._enum_list_element_type['CHAR_LIST'])
-        tree = cast(self._library.lst_get_ptr_non_inline(trees, 0), c_char_p).value
+        result['tree'] = cast(self._library.lst_get_ptr_non_inline(trees, 0), c_char_p).value
         # Cleaning
         if use_mem_handler:
             self._library.phast_free_all()
         else:
             self.clean_phylofit(f)
-        return tree
+        return result
 
     def phylop(self, method, mode, mod_fname, aln_fname=None, aln=None, aln_format=None, gff_fname=None, branch=None, prune=None, use_mem_handler=None):
         if use_mem_handler is None and self._library.phast_num_mem_handlers() != -1:

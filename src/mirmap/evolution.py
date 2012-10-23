@@ -61,7 +61,7 @@ def remove_gap_column(aln):
     return clean_aln
 
 class mmEvolution(seed.mmSeed):
-    def eval_cons_bls(self, aln_fname=None, aln=None, aln_format=None, aln_alphabet=None, subst_model=None, tree=None, fitting_tree=None, use_em=None, libphast=None, motif_def=None, motif_upstream_extension=None, motif_downstream_extension=None):
+    def eval_cons_bls(self, aln_fname=None, aln=None, aln_format=None, aln_alphabet=None, subst_model=None, tree=None, fitting_tree=None, use_em=None, libphast=None, pathphast=None, motif_def=None, motif_upstream_extension=None, motif_downstream_extension=None):
         """Computes the Branch Length Score (*BLS*).
 
            :param aln_fname: Alignment filename.
@@ -82,6 +82,8 @@ class mmEvolution(seed.mmSeed):
            :type use_em: bool
            :param libphast: Link to the Phast library.
            :type libphast: :class:`LibraryLink`
+           :param pathphast: Path to the PHAST executable.
+           :type pathphast: str
            :param motif_def: 'seed' or 'seed_extended' or 'site'.
            :type motif_def: str
            :param motif_upstream_extension: Upstream extension length.
@@ -101,8 +103,14 @@ class mmEvolution(seed.mmSeed):
             raise Exception('Alignment format undetected')
         if aln_alphabet is None:
             aln_alphabet = Defaults.aln_alphabet
-        if libphast is None:
-            libphast = self.libs.get_library_link('phast')
+        if pathphast is not None:
+            if_phast = if_exe_phast.Phast(pathphast)
+        elif libphast is not None:
+            if_phast = libphast
+        elif hasattr(self, 'libs') and 'phast' in self.libs.libs:
+            if_phast = self.libs.get_library_link('phast')
+        else:
+            if_phast = if_exe_phast.Phast()
         if subst_model is None:
             subst_model = Defaults.subst_model
         if fitting_tree is None:
@@ -142,9 +150,9 @@ class mmEvolution(seed.mmSeed):
                 if fitting_tree_done is False:
                     if fitting_tree:
                         if aln_fname:
-                            fitted_tree = libphast.phylofit(subst_model=subst_model, aln_fname=aln_fname, aln_format=aln_format, tree=tree, use_em=use_em)
+                            fitted_tree = if_phast.phylofit(subst_model=subst_model, aln_fname=aln_fname, aln_format=aln_format, tree=tree, use_em=use_em)['tree']
                         elif aln:
-                            fitted_tree = libphast.phylofit(subst_model=subst_model, aln=aln, aln_format=aln_format, tree=tree, use_em=use_em)
+                            fitted_tree = if_phast.phylofit(subst_model=subst_model, aln=aln, aln_format=aln_format, tree=tree, use_em=use_em)['tree']
                     else:
                         fitted_tree = tree
                     fitting_tree_done = True
