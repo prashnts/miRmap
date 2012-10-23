@@ -37,7 +37,7 @@ class Spatt(object):
         cmd.append('--Markov')
         cmd.append(markovf.name)
         # Executing program
-        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=tempfile.tempdir)
+        p = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=tempfile.gettempdir())
         stdout, stderr = p.communicate()
         # Parsing results
         markovf.close()
