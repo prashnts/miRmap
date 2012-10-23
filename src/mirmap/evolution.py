@@ -14,6 +14,7 @@ import copy
 
 import dendropy
 
+from . import if_exe_phast
 from . import seed
 from . import utils
 
@@ -154,7 +155,7 @@ class mmEvolution(seed.mmSeed):
             else:
                 self.cons_blss.append(0.)
 
-    def eval_selec_phylop(self, aln_fname=None, aln=None, aln_format=None, aln_alphabet=None, mod_fname=None, libphast=None, method=None, mode=None, motif_def=None, motif_upstream_extension=None, motif_downstream_extension=None):
+    def eval_selec_phylop(self, aln_fname=None, aln=None, aln_format=None, aln_alphabet=None, mod_fname=None, libphast=None, pathphast=None, method=None, mode=None, motif_def=None, motif_upstream_extension=None, motif_downstream_extension=None):
         """Computes the *PhyloP* score.
 
            :param aln_fname: Alignment filename.
@@ -169,6 +170,8 @@ class mmEvolution(seed.mmSeed):
            :type mod_fname: str
            :param libphast: Link to the Phast library.
            :type libphast: :class:`LibraryLink`
+           :param pathphast: Path to the PHAST executable.
+           :type pathphast: str
            :param method: Test name performed by PhyloP (SPH...).
            :type method: str
            :param mode: Testing for conservation (CON), acceleration (ACC) or both (CONACC).
@@ -190,8 +193,14 @@ class mmEvolution(seed.mmSeed):
             raise Exception('Alignment format undetected')
         if aln_alphabet is None:
             aln_alphabet = Defaults.aln_alphabet
-        if libphast is None:
-            libphast = self.libs.get_library_link('phast')
+        if pathphast is not None:
+            if_phast = if_exe_phast.Phast(pathphast)
+        elif libphast is not None:
+            if_phast = libphast
+        elif hasattr(self, 'libs') and 'phast' in self.libs.libs:
+            if_phast = self.libs.get_library_link('phast')
+        else:
+            if_phast = if_exe_phast.Phast()
         if method is None:
             method = Defaults.method
         if mode is None:
@@ -237,7 +246,7 @@ class mmEvolution(seed.mmSeed):
                 partial_seqs = remove_gap_column(partial_seqs)
                 aln = '\n'.join(['> %s\n%s'%(seq_name, seq) for seq_name, seq in partial_seqs.items()])
                 # Compute p-value
-                pval = libphast.phylop(method=method, mode=mode, mod_fname=mod_fname, aln=aln, aln_format='FASTA')
+                pval = if_phast.phylop(method=method, mode=mode, mod_fname=mod_fname, aln=aln, aln_format='FASTA')
                 self.selec_phylops.append(pval)
             else:
                 self.selec_phylops.append(1.)
