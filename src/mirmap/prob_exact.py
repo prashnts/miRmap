@@ -9,21 +9,24 @@
 
 """Probability based on exact distribution feature."""
 
+from . import if_exe_spatt
 from . import seed
 from . import prob
 from . import utils
 
 class mmProbExact(seed.mmSeed):
-    def eval_prob_exact(self, libspatt=None, markov_order=None, alphabet=None, transitions=None, motif_def=None, motif_upstream_extension=None, motif_downstream_extension=None):
+    def eval_prob_exact(self, libspatt=None, pathspatt=None, markov_order=None, alphabet=None, transitions=None, motif_def=None, motif_upstream_extension=None, motif_downstream_extension=None):
         """Computes the *P.over binomial* score.
 
            :param libspatt: Link to the Spatt library.
            :type libspatt: :class:`LibraryLink`
+           :param pathspatt: Path to the Spatt executable.
+           :type pathspatt: str
            :param markov_order: Markov Chain order
            :type markov_order: int
            :param alphabet: List of nucleotides to consider in the sequences (others get filtered).
            :type alphabet: list
-           :param transitions: Transition matrix of the Markov Chain model
+           :param transitions: Transition matrix of the Markov Chain model.
            :type transitions: list
            :param motif_def: 'seed' or 'seed_extended' or 'site'.
            :type motif_def: str
@@ -32,8 +35,14 @@ class mmProbExact(seed.mmSeed):
            :param motif_downstream_extension: Downstream extension length.
            :type motif_downstream_extension: int"""
         # Parameters
-        if libspatt is None:
-            libspatt = self.libs.get_library_link('spatt')
+        if pathspatt is not None:
+            if_spatt = if_exe_spatt.Spatt(pathspatt)
+        elif libspatt is not None:
+            if_spatt = libspatt
+        elif hasattr(self, 'libs') and 'spatt' in self.libs.libs:
+            if_spatt = self.libs.get_library_link('spatt')
+        else:
+            if_spatt = if_exe_spatt.Spatt()
         if markov_order is None:
             markov_order = Defaults.markov_order
         if alphabet is None:
@@ -55,7 +64,7 @@ class mmProbExact(seed.mmSeed):
             # start_motif and end_motif are sequence coordinates => 1-based
             start_motif, end_motif = seed.get_motif_coordinates(end_site, motif_def, self.pairings[its], motif_upstream_extension, motif_downstream_extension, self.min_target_length)
             motif = self.target_seq[start_motif-1:end_motif]
-            self.prob_exacts.append(libspatt.get_exact_prob(utils.clean_seq(motif, alphabet), self.target_seq.count(motif), self.len_target_seq, alphabet, utils.flatten(transitions), markov_order, 'o'))
+            self.prob_exacts.append(if_spatt.get_exact_prob(utils.clean_seq(motif, alphabet), self.target_seq.count(motif), self.len_target_seq, alphabet, transitions, markov_order, 'o'))
 
     @property
     def prob_exact(self):

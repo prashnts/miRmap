@@ -7,14 +7,16 @@
 # See /LICENSE for more information.
 #
 
-"""Ctypes interface classes with the `Spatt <http://www.mi.parisdescartes.fr/~nuel/spatt>`_ C library."""
+"""Ctypes interface classe with the `Spatt <http://www.mi.parisdescartes.fr/~nuel/spatt>`_ C library."""
 
 import os
 
 from ctypes import *
 
+from . import utils
+
 class Spatt(object):
-    """Interface class for the Spatt library"""
+    """Interface class for the Spatt library."""
     def __init__(self, library_path=None, library_name=None):
         if library_name is None:
             lib = 'libspatt2.so'
@@ -37,5 +39,5 @@ class Spatt(object):
         return ctransitions
 
     def get_exact_prob(self, motif, nobs, length_seq, alphabet, transitions, markov_order, direction):
-        ctransitions = self.transitions_l2c(transitions)
+        ctransitions = self.transitions_l2c(utils.flatten(transitions))
         return self._library.spatt_exact(''.join(alphabet), motif, cast(ctransitions, POINTER(c_double)), markov_order, False, nobs, length_seq, direction)
