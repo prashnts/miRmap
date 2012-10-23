@@ -39,7 +39,7 @@ class Spatt(object):
         # Executing program
         p = subprocess.Popen(cmd, stdout=subprocess.PIPE, cwd=tempfile.gettempdir())
         stdout, stderr = p.communicate()
-        # Parsing results
         markovf.close()
+        # Parsing results
         decoded = re.search(r'P\(N>=Nobs\)=(?P<prob>\S+)', stdout)
         return float.fromhex(decoded.groupdict()['prob'])
