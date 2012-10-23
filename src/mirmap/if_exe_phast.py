@@ -49,7 +49,5 @@ class Phast(object):
         stdout, stderr = p.communicate()
         aln_file.close()
         # Parsing results
-        #print stdout
         decoded = re.search(r'p-value of conservation: (?P<prob>\S+)', stdout)
-        print float(decoded.groupdict()['prob'])
         return float(decoded.groupdict()['prob'])
