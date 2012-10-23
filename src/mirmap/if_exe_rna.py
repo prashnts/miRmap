@@ -12,6 +12,7 @@
 import os
 import re
 import subprocess
+import tempfile
 
 class RNAvienna(object):
     """Interface class for RNA programs from Vienna."""
@@ -45,9 +46,8 @@ class RNAvienna(object):
         if temperature is not None:
             cmd.append('--temp='+str(temperature))
         # Executing program
-        p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+        p = subprocess.Popen(cmd, stdin=subprocess.PIPE, stdout=subprocess.PIPE, cwd=tempfile.gettempdir())
         stdout, stderr = p.communicate('\n'.join(['&'.join(seqs), constraints]))
-        #print '*****\n'+stdout+'\n*****\n'
         # Parsing results
         decoded = re.match(regex, stdout)
         result = {}

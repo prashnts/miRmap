@@ -70,7 +70,6 @@ class mmThermo(seed.mmSeed):
             self.dg_duplexs.append(result['mfe'])
             self.dg_duplex_foldings.append(result['mfe_structure'])
             self.dg_bindings.append(result['efe_binding'])
-            print result
 
     def eval_dg_open(self, librna=None, pathrna=None, upstream_rest=None, downstream_rest=None, dg_binding_area=None, temperature=None):
         """Computes the *ΔG open* score.
