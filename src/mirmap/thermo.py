@@ -55,17 +55,25 @@ class mmThermo(seed.mmSeed):
         if temperature is None:
             temperature = Defaults.temperature
         # Reset
+        self.dg_duplex_seeds = []
+        self.dg_binding_seeds = []
         self.dg_duplexs = []
         self.dg_duplex_foldings = []
         self.dg_bindings = []
         # Compute
         for its in range(len(self.end_sites)):
-            # Target site binding sequence
+            # Target site and seed binding sequences
             target_site_seq = self.target_seq[self.end_sites[its] - self.min_target_length : self.end_sites[its]]
+            target_seed_seq = self.target_seq[self.end_sites[its] - (mirna_start_pairing - 1) - self.seed_lengths[its] : self.end_sites[its] - (mirna_start_pairing - 1)]
+            mirna_seed_seq = self.mirna_seq[mirna_start_pairing - 1 : mirna_start_pairing + self.seed_lengths[its] - 1]
             # Constraint sequence
             len_no_constraints = self.min_target_length - self.seed_lengths[its] - (mirna_start_pairing - 1)
             constraints_seq = '.' * len_no_constraints + get_pairing_string(self.pairings[its]) + '.' * len_no_constraints
-            # Co-folding
+            # Co-folding of seed
+            result = if_rna.cofold(target_seed_seq, mirna_seed_seq, partfunc=True, temperature=temperature)
+            self.dg_duplex_seeds.append(result['mfe'])
+            self.dg_binding_seeds.append(result['efe_binding'])
+            # Co-folding of target site
             result = if_rna.cofold(target_site_seq, self.mirna_seq, constraints=constraints_seq, partfunc=True, temperature=temperature)
             self.dg_duplexs.append(result['mfe'])
             self.dg_duplex_foldings.append(result['mfe_structure'])
