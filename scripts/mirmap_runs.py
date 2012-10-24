@@ -8,10 +8,9 @@ import os
 import socket
 import sys
 
-import cevbio.empty as shared
-import cevbio.mylog as mylog
 import mirmap
 import mirmap.library_link
+import mirmap.empty as shared
 
 def predict_on_mim(args):
     mirna, transcript = args
@@ -76,7 +75,11 @@ def main(argv=None):
     args = parser.parse_args(argv[1:])
 
     # Logging
-    logger = mylog.define_root_logger('mirmap', level=args.logging_level)
+    try:
+        import cevbio.mylog as mylog
+        logger = mylog.define_root_logger('mirmap', level=args.logging_level)
+    except ImportError:
+        import logging as logger
     logger.debug('Starting on %s'%(socket.gethostname()))
 
     # Paths
