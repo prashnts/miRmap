@@ -42,7 +42,7 @@ class RNAvienna(object):
             if prog == 'RNAfold':
                 regex += r'\n *(?P<efe_structure>\S+) \[(?P<efe>.+)\]\n(?P<cfe_structure>\S+) \{ *(?P<cfe>\S+) d=(?P<dist>\S+)\}\n frequency of mfe structure in ensemble (?P<mfe_frequency>\S+); ensemble diversity (?P<ensemble_diversity>\S+)'
             if prog == 'RNAcofold':
-                regex += r'\n *(?P<efe_structure>\S+) \[(?P<efe>.+)\]\n frequency of mfe structure in ensemble (?P<mfe_frequency>\S+) , delta G binding=(?P<efe_binding>\S+)'
+                regex += r'\n *(?P<efe_structure>\S+) \[(?P<efe>.+)\]\n frequency of mfe structure in ensemble (?P<mfe_frequency>\S+) , delta G binding= *(?P<efe_binding>\S+)'
         if temperature is not None:
             cmd.append('--temp='+str(temperature))
         # Executing program
