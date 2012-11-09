@@ -41,6 +41,8 @@ class mmProbExact(seed.mmSeed):
             if_spatt = libspatt
         elif hasattr(self, 'libs') and 'spatt' in self.libs.libs:
             if_spatt = self.libs.get_library_link('spatt')
+        elif hasattr(self, 'exe_path'):
+            if_spatt = if_exe_spatt.Spatt(exe_path=self.exe_path)
         else:
             if_spatt = if_exe_spatt.Spatt()
         if markov_order is None:

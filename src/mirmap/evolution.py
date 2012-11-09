@@ -207,6 +207,8 @@ class mmEvolution(seed.mmSeed):
             if_phast = libphast
         elif hasattr(self, 'libs') and 'phast' in self.libs.libs:
             if_phast = self.libs.get_library_link('phast')
+        elif hasattr(self, 'exe_path'):
+            if_phast = if_exe_phast.Phast(exe_path=self.exe_path)
         else:
             if_phast = if_exe_phast.Phast()
         if method is None:

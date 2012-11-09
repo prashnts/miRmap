@@ -17,6 +17,8 @@ def predict_on_mim(args):
     mimset = mirmap.mm(transcript[1], mirna[1])
     if shared.libs:
         mimset.libs = shared.libs
+    if shared.exe_path:
+        mimset.exe_path = shared.exe_path
     mimset.find_potential_targets_with_seed()
     if len(mimset.end_sites) > 0:
         # De novo features
@@ -67,6 +69,7 @@ def main(argv=None):
     group.add_argument('-f', '--transcript-fasta', dest='transcript_fname_fasta', action='store', help='Transcript Fasta file')
     group.add_argument('-c', '--transcript-tab', dest='transcript_fname_tab', action='store', help='Transcript tabulated file')
     parser.add_argument('-l', '--library', dest='library_path', action='store', help='External C libraries path')
+    parser.add_argument('-e', '--exe', dest='exe_path', action='store', help='External programs path')
     parser.add_argument('-s', '--aln', dest='aln_path', action='store', help='Multiple sequences alignment(s) path')
     parser.add_argument('-d', '--mod', dest='mod_path', action='store', help='Model(s) path')
     parser.add_argument('-o', '--output', dest='output_fname', action='store', default='-', help='Worker(s)')
@@ -102,6 +105,12 @@ def main(argv=None):
         shared.libs = mirmap.library_link.LibraryLink(args.library_path)
     else:
         shared.libs = None
+
+    # Adding external programs path
+    if args.exe_path:
+        shared.exe_path = args.exe_path
+    else:
+        shared.exe_path = None
 
     # Reading sequences
     if args.mirna_fname_fasta:

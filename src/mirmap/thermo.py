@@ -101,6 +101,8 @@ class mmThermo(seed.mmSeed):
             if_rna = librna
         elif hasattr(self, 'libs') and 'rna' in self.libs.libs:
             if_rna = self.libs.get_library_link('rna')
+        elif hasattr(self, 'exe_path'):
+            if_rna = if_exe_rna.RNAvienna(exe_path=self.exe_path)
         else:
             if_rna = if_exe_rna.RNAvienna()
         if upstream_rest is None:
