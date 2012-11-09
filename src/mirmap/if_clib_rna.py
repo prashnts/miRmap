@@ -161,6 +161,8 @@ class RNAvienna(object):
             self._library.init_pf_fold(len(seq))
             if constraints is not None:
                 struc_buffer.value = constraints
+            else:
+                struc_buffer = self.get_string_buffer(len(seq) + 1)
             pffold = self._library.pf_fold(seq, struc_buffer)
             self._library.free_pf_arrays()
             kT = ((temperature + 273.15) * 1.98717) / 1000.
