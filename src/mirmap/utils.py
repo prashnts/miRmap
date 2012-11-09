@@ -28,7 +28,7 @@ def clean_seq(seq, alphabet):
             seq = seq.replace(l, '')
     return seq
 
-def load_fasta(fasta, as_string=None):
+def load_fasta(fasta, as_string=None, upper=False):
     if as_string is None:
         as_string = False
     if as_string:
@@ -45,7 +45,10 @@ def load_fasta(fasta, as_string=None):
             name_seq = line[1:].strip()
             seqs[name_seq] = ''
         else:
-            seqs[name_seq] += line
+            if upper:
+                seqs[name_seq] += line.upper()
+            else:
+                seqs[name_seq] += line
     if as_string is False:
         ff.close()
     return seqs

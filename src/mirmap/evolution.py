@@ -124,9 +124,9 @@ class mmEvolution(seed.mmSeed):
         fitting_tree_done = False
         # Load alignment
         if aln_fname:
-            seqs = utils.load_fasta(aln_fname)
+            seqs = utils.load_fasta(aln_fname, upper=True)
         else:
-            seqs = utils.load_fasta(aln, as_string=True)
+            seqs = utils.load_fasta(aln, as_string=True, upper=True)
         seqs_cleaned = {}
         for seq_name, seq in seqs.items():
             seqs_cleaned[seq_name] = utils.clean_seq(seq, aln_alphabet)
@@ -219,9 +219,9 @@ class mmEvolution(seed.mmSeed):
             motif_downstream_extension = 0
         # Load alignment and remove gaps
         if aln_fname:
-            seqs = utils.load_fasta(aln_fname)
+            seqs = utils.load_fasta(aln_fname, upper=True)
         else:
-            seqs = utils.load_fasta(aln, as_string=True)
+            seqs = utils.load_fasta(aln, as_string=True, upper=True)
         seqs_cleaned = {}
         seqs_coords = {}
         for seq_name, seq in seqs.items():
@@ -283,4 +283,4 @@ class Defaults(object):
     method = 'SPH'
     mode = 'CONACC'
     #
-    aln_alphabet = ['A', 'T', 'C', 'G']
+    aln_alphabet = ['A', 'T', 'C', 'G', 'N']
