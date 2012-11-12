@@ -46,6 +46,10 @@ class mmModel(seed.mmSeed):
                 score += self.dg_duplexs[its] * self.model['slope_dg_duplex']
             if self.model.has_key('slope_dg_binding'):
                 score += self.dg_bindings[its] * self.model['slope_dg_binding']
+            if self.model.has_key('slope_dg_duplex_seed'):
+                score += self.dg_duplex_seeds[its] * self.model['slope_dg_duplex_seed']
+            if self.model.has_key('slope_dg_binding_seed'):
+                score += self.dg_binding_seeds[its] * self.model['slope_dg_binding_seed']
             if self.model.has_key('slope_dg_open'):
                 score += self.dg_opens[its] * self.model['slope_dg_open']
             if self.model.has_key('slope_prob_exact'):
