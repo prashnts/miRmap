@@ -51,7 +51,7 @@ def predict_on_mim(args):
                     mimset.eval_cons_bls(aln_fname=aln_fname, tree='species.tree', fitting_tree=True)
                     mimset.eval_selec_phylop(aln_fname=aln_fname, mod_fname=mod_fname)
         mimset.eval_score()
-        return mirna[0], transcript[0], mimset.end_sites, mimset.seed_lengths, mimset.nb_mismatches_except_gu_wobbles, mimset.nb_gu_wobbles, mimset.tgs_aus, mimset.tgs_positions, mimset.tgs_pairing3ps, mimset.tgs_scores, mimset.dg_duplexs, mimset.dg_bindings, mimset.dg_opens, mimset.dg_totals, mimset.prob_exacts, mimset.prob_binomials, mimset.cons_blss, mimset.selec_phylops, mimset.scores
+        return mirna[0], transcript[0], mimset.end_sites, mimset.seed_lengths, mimset.nb_mismatches_except_gu_wobbles, mimset.nb_gu_wobbles, mimset.tgs_aus, mimset.tgs_positions, mimset.tgs_pairing3ps, mimset.tgs_scores, mimset.dg_duplexs, mimset.dg_bindings, mimset.dg_duplex_seeds, mimset.dg_binding_seeds, mimset.dg_opens, mimset.dg_totals, mimset.prob_exacts, mimset.prob_binomials, mimset.cons_blss, mimset.selec_phylops, mimset.scores
 
 def main(argv=None):
     # Parameters
