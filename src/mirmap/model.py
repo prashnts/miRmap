@@ -13,20 +13,10 @@ from . import seed
 
 class mmModel(seed.mmSeed):
     def eval_score(self, model_name=None, model=None):
-        # Parameter: if the user doesn't give anything, trying to find the most appropriate model in Defaults
+        # Parameter
         if model_name is None:
             if model is None:
-                needed_slopes = []
-                for feat in ['tgs_aus', 'tgs_positions', 'tgs_pairing3ps', 'dg_duplexs', 'dg_bindings', 'dg_duplex_seed', 'dg_binding_seed', 'dg_opens', 'prob_exacts', 'prob_binomials', 'cons_blss', 'selec_phylops']:
-                    if hasattr(self, feat):
-                        needed_slopes.append('slope_'+feat[:-1])
-                num_feats_largest_model = 0
-                for model_name,model_params in Defaults.models.items():
-                    if len(set(model_params.keys()).intersection(set(needed_slopes))) == (len(model_params) - 1):
-                        if num_feats_largest_model < len(model_params.keys()):
-                            num_feats_largest_model = len(model_params.keys())
-                            #print(model_name)
-                            self.model = model_params
+                self.model = Defaults.model
             else:
                 self.model = model
         else:
@@ -35,31 +25,12 @@ class mmModel(seed.mmSeed):
         self.scores = []
         # Compute
         for its in range(len(self.end_sites)):
+            if Defaults.model_select:
+                self.model = Defaults.model_select(self, its)
             score = self.model['intercept']
-            if self.model.has_key('slope_tgs_au'):
-                score += self.tgs_aus[its] * self.model['slope_tgs_au']
-            if self.model.has_key('slope_tgs_position'):
-                score += self.tgs_positions[its] * self.model['slope_tgs_position']
-            if self.model.has_key('slope_tgs_pairing3p'):
-                score += self.tgs_pairing3ps[its] * self.model['slope_tgs_pairing3p']
-            if self.model.has_key('slope_dg_duplex'):
-                score += self.dg_duplexs[its] * self.model['slope_dg_duplex']
-            if self.model.has_key('slope_dg_binding'):
-                score += self.dg_bindings[its] * self.model['slope_dg_binding']
-            if self.model.has_key('slope_dg_duplex_seed'):
-                score += self.dg_duplex_seeds[its] * self.model['slope_dg_duplex_seed']
-            if self.model.has_key('slope_dg_binding_seed'):
-                score += self.dg_binding_seeds[its] * self.model['slope_dg_binding_seed']
-            if self.model.has_key('slope_dg_open'):
-                score += self.dg_opens[its] * self.model['slope_dg_open']
-            if self.model.has_key('slope_prob_exact'):
-                score += self.prob_exacts[its] * self.model['slope_prob_exact']
-            if self.model.has_key('slope_prob_binomial'):
-                score += self.prob_binomials[its] * self.model['slope_prob_binomial']
-            if self.model.has_key('slope_cons_bls'):
-                score += self.cons_blss[its] * self.model['slope_cons_bls']
-            if self.model.has_key('slope_selec_phylop'):
-                score += self.selec_phylops[its] * self.model['slope_selec_phylop']
+            for k in self.model.keys():
+                if k != 'intercept':
+                    score += getattr(self, k+'s')[its] * self.model[k]
             self.scores.append(score)
 
 class Defaults(object):
@@ -71,32 +42,32 @@ class Defaults(object):
     # -----------------------------------------------
     # All-feature model
     models['full_seed6'] = {}
-    models['full_seed6']['slope_tgs_au'] = -0.275016235769136
-    models['full_seed6']['slope_tgs_position'] = 5.43367028065211e-06
-    models['full_seed6']['slope_tgs_pairing3p'] = -0.00233278119760994
-    models['full_seed6']['slope_dg_duplex'] = 0.00772658898496047
-    models['full_seed6']['slope_dg_binding'] = -0.00303683833660696
-    models['full_seed6']['slope_dg_duplex_seed'] = 0.0496909801533612
-    models['full_seed6']['slope_dg_binding_seed'] = -0.048931930580652
-    models['full_seed6']['slope_dg_open'] = 0.000674676164622922
-    models['full_seed6']['slope_prob_exact'] = 0.16111635592018
-    models['full_seed6']['slope_prob_binomial'] = -0.0388333740708671
-    models['full_seed6']['slope_cons_bls'] = -0.00426314077593848
-    models['full_seed6']['slope_selec_phylop'] = -0.0112455248228072
+    models['full_seed6']['tgs_au'] = -0.275016235769136
+    models['full_seed6']['tgs_position'] = 5.43367028065211e-06
+    models['full_seed6']['tgs_pairing3p'] = -0.00233278119760994
+    models['full_seed6']['dg_duplex'] = 0.00772658898496047
+    models['full_seed6']['dg_binding'] = -0.00303683833660696
+    models['full_seed6']['dg_duplex_seed'] = 0.0496909801533612
+    models['full_seed6']['dg_binding_seed'] = -0.048931930580652
+    models['full_seed6']['dg_open'] = 0.000674676164622922
+    models['full_seed6']['prob_exact'] = 0.16111635592018
+    models['full_seed6']['prob_binomial'] = -0.0388333740708671
+    models['full_seed6']['cons_bls'] = -0.00426314077593848
+    models['full_seed6']['selec_phylop'] = -0.0112455248228072
     models['full_seed6']['intercept'] = 0.148300586692704
     models['full_seed7'] = {}
-    models['full_seed7']['slope_tgs_au'] = -0.402470212080983
-    models['full_seed7']['slope_tgs_position'] = 6.89249707831041e-05
-    models['full_seed7']['slope_tgs_pairing3p'] = -0.0129891251446967
-    models['full_seed7']['slope_dg_duplex'] = 0.0141332997802509
-    models['full_seed7']['slope_dg_binding'] = -0.0132159175462755
-    models['full_seed7']['slope_dg_duplex_seed'] = -0.0814445085121904
-    models['full_seed7']['slope_dg_binding_seed'] = 0.115558118311931
-    models['full_seed7']['slope_dg_open'] = 0.00331507347139685
-    models['full_seed7']['slope_prob_exact'] = 0.792962156550929
-    models['full_seed7']['slope_prob_binomial'] = -0.22119499646323
-    models['full_seed7']['slope_cons_bls'] = -0.0355840335642203
-    models['full_seed7']['slope_selec_phylop'] = -0.0127531995991629
+    models['full_seed7']['tgs_au'] = -0.402470212080983
+    models['full_seed7']['tgs_position'] = 6.89249707831041e-05
+    models['full_seed7']['tgs_pairing3p'] = -0.0129891251446967
+    models['full_seed7']['dg_duplex'] = 0.0141332997802509
+    models['full_seed7']['dg_binding'] = -0.0132159175462755
+    models['full_seed7']['dg_duplex_seed'] = -0.0814445085121904
+    models['full_seed7']['dg_binding_seed'] = 0.115558118311931
+    models['full_seed7']['dg_open'] = 0.00331507347139685
+    models['full_seed7']['prob_exact'] = 0.792962156550929
+    models['full_seed7']['prob_binomial'] = -0.22119499646323
+    models['full_seed7']['cons_bls'] = -0.0355840335642203
+    models['full_seed7']['selec_phylop'] = -0.0127531995991629
     models['full_seed7']['intercept'] = 0.349448109979275
     # -----------------------------------------------
     # Python-only model
@@ -370,3 +341,13 @@ class Defaults(object):
     models['hendrickson_ribnumber_targetscan_seed7']['slope_tgs_position'] = 2.98856306844393e-05
     models['hendrickson_ribnumber_targetscan_seed7']['slope_tgs_pairing3p'] = -0.00504340734361336
     models['hendrickson_ribnumber_targetscan_seed7']['intercept'] = 1.04945425805266
+    # ---------------------------------------------------------------
+    # Default model
+    model = models['full_seed7']
+
+    @staticmethod
+    def model_select(mim, i):
+        if mim.seed_lengths[i] == 6:
+            return Defaults.models['full_seed6']
+        elif mim.seed_lengths[i] >= 7:
+            return Defaults.models['full_seed7']
