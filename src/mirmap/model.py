@@ -17,7 +17,7 @@ class mmModel(seed.mmSeed):
         if model_name is None:
             if model is None:
                 needed_slopes = []
-                for feat in ['tgs_aus', 'tgs_positions', 'tgs_pairing3ps', 'dg_duplexs', 'dg_bindings', 'dg_opens', 'prob_exacts', 'prob_binomials', 'cons_blss', 'selec_phylops']:
+                for feat in ['tgs_aus', 'tgs_positions', 'tgs_pairing3ps', 'dg_duplexs', 'dg_bindings', 'dg_duplex_seed', 'dg_binding_seed', 'dg_opens', 'prob_exacts', 'prob_binomials', 'cons_blss', 'selec_phylops']:
                     if hasattr(self, feat):
                         needed_slopes.append('slope_'+feat[:-1])
                 num_feats_largest_model = 0
@@ -60,74 +60,62 @@ class mmModel(seed.mmSeed):
 
 class Defaults(object):
     models = {}
+    # ---------------------------------------------------------------
+    # Current models based on Grimson et al dataset
+    # ---------------------------------------------------------------
+    #
+    # -----------------------------------------------
+    # All-feature model
+    models['full_seed6'] = {}
+    models['full_seed6']['slope_tgs_au'] = -0.275016235769136
+    models['full_seed6']['slope_tgs_position'] = 5.43367028065211e-06
+    models['full_seed6']['slope_tgs_pairing3p'] = -0.00233278119760994
+    models['full_seed6']['slope_dg_duplex'] = 0.00772658898496047
+    models['full_seed6']['slope_dg_binding'] = -0.00303683833660696
+    models['full_seed6']['slope_dg_duplex_seed'] = 0.0496909801533612
+    models['full_seed6']['slope_dg_binding_seed'] = -0.048931930580652
+    models['full_seed6']['slope_dg_open'] = 0.000674676164622922
+    models['full_seed6']['slope_prob_exact'] = 0.16111635592018
+    models['full_seed6']['slope_prob_binomial'] = -0.0388333740708671
+    models['full_seed6']['slope_cons_bls'] = -0.00426314077593848
+    models['full_seed6']['slope_selec_phylop'] = -0.0112455248228072
+    models['full_seed6']['intercept'] = 0.148300586692704
+    models['full_seed7'] = {}
+    models['full_seed7']['slope_tgs_au'] = -0.402470212080983
+    models['full_seed7']['slope_tgs_position'] = 6.89249707831041e-05
+    models['full_seed7']['slope_tgs_pairing3p'] = -0.0129891251446967
+    models['full_seed7']['slope_dg_duplex'] = 0.0141332997802509
+    models['full_seed7']['slope_dg_binding'] = -0.0132159175462755
+    models['full_seed7']['slope_dg_duplex_seed'] = -0.0814445085121904
+    models['full_seed7']['slope_dg_binding_seed'] = 0.115558118311931
+    models['full_seed7']['slope_dg_open'] = 0.00331507347139685
+    models['full_seed7']['slope_prob_exact'] = 0.792962156550929
+    models['full_seed7']['slope_prob_binomial'] = -0.22119499646323
+    models['full_seed7']['slope_cons_bls'] = -0.0355840335642203
+    models['full_seed7']['slope_selec_phylop'] = -0.0127531995991629
+    models['full_seed7']['intercept'] = 0.349448109979275
+    # -----------------------------------------------
+    # Python-only model
+    models['python_only_seed6'] = {}
+    models['python_only_seed6']['slope_tgs_au'] = -0.275594504153219
+    models['python_only_seed6']['slope_tgs_position'] = 9.44582844229299e-06
+    models['python_only_seed6']['slope_tgs_pairing3p'] = -0.0111209267382849
+    models['python_only_seed6']['slope_prob_binomial'] = 0.0701619992923641
+    models['python_only_seed6']['slope_cons_bls'] = -0.00646548621345819
+    models['python_only_seed6']['intercept'] = 0.121104869645859
+    models['python_only_seed7'] = {}
+    models['python_only_seed7']['slope_tgs_au'] = -0.443606032336791
+    models['python_only_seed7']['slope_tgs_position'] = 6.34603935320321e-05
+    models['python_only_seed7']['slope_tgs_pairing3p'] = -0.0207672870210752
+    models['python_only_seed7']['slope_prob_binomial'] = 0.378665477250754
+    models['python_only_seed7']['slope_cons_bls'] = -0.0552713344740971
+    models['python_only_seed7']['intercept'] = 0.150015113841088
+    # ---------------------------------------------------------------
+    # Models used in the NAR manuscript
+    # ---------------------------------------------------------------
+    #
     # -----------------------------------------------
     # Grimson et al dataset
-    # All features model
-    models['full'] = {}
-    models['full']['slope_tgs_au'] = -0.4119
-    models['full']['slope_tgs_position'] = 5.088e-05
-    models['full']['slope_tgs_pairing3p'] = -0.01050
-    models['full']['slope_dg_duplex'] = 0.009900
-    models['full']['slope_dg_binding'] = -0.002919
-    models['full']['slope_dg_open'] = 0.003914
-    models['full']['slope_prob_exact'] = 1.022
-    models['full']['slope_prob_binomial'] = -0.3582
-    models['full']['slope_cons_bls'] = -0.03431
-    models['full']['slope_selec_phylop'] = -0.009622
-    models['full']['intercept'] = 0.08088
-    # 6-main features model
-    models['6main'] = {}
-    models['6main']['slope_tgs_au'] = -0.374916394988515
-    models['6main']['slope_tgs_position'] = 4.32491567764873e-05
-    models['6main']['slope_tgs_pairing3p'] = -0.0142311800727794
-    models['6main']['slope_dg_total'] = 0.00457689691424624
-    models['6main']['slope_prob_exact'] = 0.59324652766238
-    models['6main']['slope_cons_bls'] = -0.0501060580011392
-    models['6main']['intercept'] = 0.0358769265996316
-    # 7-main features model
-    models['7main'] = {}
-    models['7main']['slope_tgs_au'] = -3.701e-01
-    models['7main']['slope_tgs_position'] = 3.931e-05
-    models['7main']['slope_tgs_pairing3p'] = -2.175e-02
-    models['7main']['slope_dg_open'] = 3.384e-03
-    models['7main']['slope_prob_exact'] = 5.683e-01
-    models['7main']['slope_cons_bls'] = -3.526e-02
-    models['7main']['slope_selec_phylop'] = -8.838e-03
-    models['7main']['intercept'] = 1.058e-02
-    # 7-main features model minus the conservation features
-    models['7main_minus_conservation'] = {}
-    models['7main_minus_conservation']['slope_tgs_au'] = -4.246e-01
-    models['7main_minus_conservation']['slope_tgs_position'] = 5.083e-05
-    models['7main_minus_conservation']['slope_tgs_pairing3p'] = -2.350e-02
-    models['7main_minus_conservation']['slope_dg_open'] = 3.812e-03
-    models['7main_minus_conservation']['slope_prob_exact'] = 4.856e-01
-    models['7main_minus_conservation']['intercept'] = -2.872e-02
-    # TargetScan model
-    models['targetscan'] = {}
-    models['targetscan']['slope_tgs_au'] = -0.5368
-    models['targetscan']['slope_tgs_position'] = 0.0001234
-    models['targetscan']['slope_tgs_pairing3p'] = -0.02573
-    models['targetscan']['intercept'] = 0.1586
-    # All features model (6-mer seeds)
-    models['full_seed6'] = {}
-    models['full_seed6']['slope_tgs_au'] = -0.3385
-    models['full_seed6']['slope_tgs_position'] = 2.096e-05
-    models['full_seed6']['slope_tgs_pairing3p'] = 0.001641
-    models['full_seed6']['slope_dg_duplex'] = 0.01068
-    models['full_seed6']['slope_dg_binding'] = 0.001347
-    models['full_seed6']['slope_dg_open'] = 0.002046
-    models['full_seed6']['slope_prob_exact'] = 0.07565
-    models['full_seed6']['slope_prob_binomial'] = 0.02520
-    models['full_seed6']['slope_cons_bls'] = -0.007088
-    models['full_seed6']['slope_selec_phylop'] = -0.01912
-    models['full_seed6']['intercept'] = 0.2150
-    # TargetScan model (6-mer seeds)
-    models['targetscan_seed6'] = {}
-    models['targetscan_seed6']['slope_tgs_au'] = -0.3720
-    models['targetscan_seed6']['slope_tgs_position'] = 6.350e-05
-    models['targetscan_seed6']['slope_tgs_pairing3p'] = -0.01955
-    models['targetscan_seed6']['intercept'] = 0.1618
-    # Full recompute models
     models['grimson_full_seed6'] = {}
     models['grimson_full_seed6']['slope_tgs_au'] = -0.281151452127843
     models['grimson_full_seed6']['slope_tgs_position'] = 1.58364508198562e-05
