@@ -165,7 +165,7 @@ class mmThermo(seed.mmSeed):
         """*ΔG duplex* score with default parameters.
 
            :param method: Method name used to combine target scores (Example: 'min').
-           :type pathrna: str"""
+           :type method: str"""
         if method is None:
             method = 'min'
         if hasattr(self, 'dg_duplexs') is False:
@@ -178,7 +178,7 @@ class mmThermo(seed.mmSeed):
         """*ΔG binding* score with default parameters.
 
            :param method: Method name used to combine target scores (Example: 'min').
-           :type pathrna: str"""
+           :type method: str"""
         if method is None:
             method = 'min'
         if hasattr(self, 'dg_bindings') is False:
@@ -191,7 +191,7 @@ class mmThermo(seed.mmSeed):
         """*ΔG seed duplex* score with default parameters.
 
            :param method: Method name used to combine target scores (Example: 'min').
-           :type pathrna: str"""
+           :type method: str"""
         if method is None:
             method = 'min'
         if hasattr(self, 'dg_duplex_seeds') is False:
@@ -204,7 +204,7 @@ class mmThermo(seed.mmSeed):
         """*ΔG seed binding* score with default parameters.
 
            :param method: Method name used to combine target scores (Example: 'min').
-           :type pathrna: str"""
+           :type method: str"""
         if method is None:
             method = 'min'
         if hasattr(self, 'dg_binding_seeds') is False:
@@ -217,7 +217,7 @@ class mmThermo(seed.mmSeed):
         """*ΔG open* score with default parameters.
 
            :param method: Method name used to combine target scores (Example: 'min').
-           :type pathrna: str"""
+           :type method: str"""
         if method is None:
             method = 'min'
         if hasattr(self, 'dg_opens') is False:
@@ -235,7 +235,7 @@ class mmThermo(seed.mmSeed):
         """*ΔG total* score with default parameters.
 
            :param method: Method name used to combine target scores (Example: 'min').
-           :type pathrna: str"""
+           :type method: str"""
         if method is None:
             method = 'min'
         if hasattr(self, 'dg_totals') is False:
