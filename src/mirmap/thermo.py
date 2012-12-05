@@ -162,7 +162,10 @@ class mmThermo(seed.mmSeed):
             self.dg_totals.append(self.dg_duplexs[its] + self.dg_opens[its])
 
     def get_dg_duplex(self, method=None):
-        """*ΔG duplex* score with default parameters."""
+        """*ΔG duplex* score with default parameters.
+
+           :param method: Method name used to combine target scores (Example: 'min').
+           :type pathrna: str"""
         if method is None:
             method = 'min'
         if hasattr(self, 'dg_duplexs') is False:
@@ -171,8 +174,50 @@ class mmThermo(seed.mmSeed):
             self._dg_duplex = min(self.dg_duplexs)
         return self._dg_duplex
 
+    def get_dg_binding(self, method=None):
+        """*ΔG binding* score with default parameters.
+
+           :param method: Method name used to combine target scores (Example: 'min').
+           :type pathrna: str"""
+        if method is None:
+            method = 'min'
+        if hasattr(self, 'dg_bindings') is False:
+            self.eval_dg_duplex()
+        if method == 'min':
+            self._dg_binding = min(self.dg_bindings)
+        return self._dg_binding
+
+    def get_dg_duplex_seed(self, method=None):
+        """*ΔG seed duplex* score with default parameters.
+
+           :param method: Method name used to combine target scores (Example: 'min').
+           :type pathrna: str"""
+        if method is None:
+            method = 'min'
+        if hasattr(self, 'dg_duplex_seeds') is False:
+            self.eval_dg_duplex()
+        if method == 'min':
+            self._dg_duplex_seed = min(self.dg_duplex_seeds)
+        return self._dg_duplex_seed
+
+    def get_dg_binding_seed(self, method=None):
+        """*ΔG seed binding* score with default parameters.
+
+           :param method: Method name used to combine target scores (Example: 'min').
+           :type pathrna: str"""
+        if method is None:
+            method = 'min'
+        if hasattr(self, 'dg_binding_seeds') is False:
+            self.eval_dg_duplex()
+        if method == 'min':
+            self._dg_binding_seed = min(self.dg_binding_seeds)
+        return self._dg_binding_seed
+
     def get_dg_open(self, method=None):
-        """*ΔG open* score with default parameters."""
+        """*ΔG open* score with default parameters.
+
+           :param method: Method name used to combine target scores (Example: 'min').
+           :type pathrna: str"""
         if method is None:
             method = 'min'
         if hasattr(self, 'dg_opens') is False:
@@ -187,7 +232,10 @@ class mmThermo(seed.mmSeed):
         return self._dg_open
 
     def get_dg_total(self, method=None):
-        """*ΔG total* score with default parameters."""
+        """*ΔG total* score with default parameters.
+
+           :param method: Method name used to combine target scores (Example: 'min').
+           :type pathrna: str"""
         if method is None:
             method = 'min'
         if hasattr(self, 'dg_totals') is False:
@@ -205,6 +253,21 @@ class mmThermo(seed.mmSeed):
     def dg_duplex(self):
         """*ΔG duplex* score with default parameters."""
         return self.get_dg_duplex()
+
+    @property
+    def dg_binding(self):
+        """*ΔG binding* score with default parameters."""
+        return self.get_dg_binding()
+
+    @property
+    def dg_duplex_seed(self):
+        """*ΔG seed duplex* score with default parameters."""
+        return self.get_dg_duplex_seed()
+
+    @property
+    def dg_binding_seed(self):
+        """*ΔG seed binding* score with default parameters."""
+        return self.get_dg_binding_seed()
 
     @property
     def dg_open(self):
