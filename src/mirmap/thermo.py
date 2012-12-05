@@ -161,38 +161,60 @@ class mmThermo(seed.mmSeed):
         for its in range(len(self.end_sites)):
             self.dg_totals.append(self.dg_duplexs[its] + self.dg_opens[its])
 
+    def get_dg_duplex(self, method=None):
+        """*ΔG duplex* score with default parameters."""
+        if method is None:
+            method = 'min'
+        if hasattr(self, 'dg_duplexs') is False:
+            self.eval_dg_duplex()
+        if method == 'min':
+            self._dg_duplex = min(self.dg_duplexs)
+        return self._dg_duplex
+
+    def get_dg_open(self, method=None):
+        """*ΔG open* score with default parameters."""
+        if method is None:
+            method = 'min'
+        if hasattr(self, 'dg_opens') is False:
+            self.eval_dg_open()
+        if method == 'min':
+            self._dg_open = min(self.dg_opens)
+        elif method == 'exp_sum':
+            self._dg_open = 0.
+            for dg in self.dg_opens:
+                self._dg_open += math.exp(dg * -1.0)
+            self._dg_open = math.log(self._dg_open) * -1.0
+        return self._dg_open
+
+    def get_dg_total(self, method=None):
+        """*ΔG total* score with default parameters."""
+        if method is None:
+            method = 'min'
+        if hasattr(self, 'dg_totals') is False:
+            self.eval_dg_total()
+        if method == 'min':
+            self._dg_total = min(self.dg_totals)
+        elif method == 'exp_sum':
+            self._dg_total = 0.
+            for dg in self.dg_totals:
+                self._dg_total += math.exp(dg * -1.0)
+            self._dg_total = math.log(self._dg_total) * -1.0
+        return self._dg_total
+
     @property
     def dg_duplex(self):
         """*ΔG duplex* score with default parameters."""
-        if hasattr(self, 'dg_duplexs') is False:
-            self.eval_dg_duplex()
-        self._dg_duplex = None
-        for dg in self.dg_duplexs:
-            if self._dg_duplex > dg or self._dg_duplex is None:
-                self._dg_duplex = dg
-        return self._dg_duplex
+        return self.get_dg_duplex()
 
     @property
     def dg_open(self):
         """*ΔG open* score with default parameters."""
-        if hasattr(self, 'dg_opens') is False:
-            self.eval_dg_open()
-        self._dg_open = 0.
-        for dg in self.dg_opens:
-            self._dg_open += math.exp(dg * -1.0)
-        self._dg_open = math.log(self._dg_open) * -1.0
-        return self._dg_open
+        return self.get_dg_open()
 
     @property
     def dg_total(self):
         """*ΔG total* score with default parameters."""
-        if hasattr(self, 'dg_totals') is False:
-            self.eval_dg_total()
-        self._dg_total = 0.
-        for dg in self.dg_totals:
-            self._dg_total += math.exp(dg * -1.0)
-        self._dg_total = math.log(self._dg_total) * -1.0
-        return self._dg_total
+        return self.get_dg_total()
 
 class Defaults(object):
     temperature = 37.
