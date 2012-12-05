@@ -232,13 +232,35 @@ class mmTargetScan(seed.mmSeed):
                     self.tgs_scores.append(None)
 
     @property
+    def tgs_au(self):
+        """*AU content* score with default parameters."""
+        if hasattr(self, 'tgs_aus') is False:
+            self.eval_tgs_au()
+        self._tgs_au = max(self.tgs_aus)
+        return self._tgs_au
+
+    @property
+    def tgs_position(self):
+        """*UTR position* score with default parameters."""
+        if hasattr(self, 'tgs_positions') is False:
+            self.eval_tgs_position()
+        self._tgs_position = min(self.tgs_positions)
+        return self._tgs_position
+
+    @property
+    def tgs_pairing3p(self):
+        """*3' pairing* score with default parameters."""
+        if hasattr(self, 'tgs_pairing3ps') is False:
+            self.eval_tgs_pairing3p()
+        self._tgs_pairing3p = max(self.tgs_pairing3ps)
+        return self._tgs_pairing3p
+
+    @property
     def tgs_score(self):
         """*TargetScan* score with default parameters."""
         if hasattr(self, 'tgs_scores') is False:
             self.eval_tgs_score()
-        self._tgs_score = 0.
-        for tgs in self.tgs_scores:
-            self._tgs_score += tgs
+        self._tgs_score = sum(self.tgs_scores)
         return self._tgs_score
 
 class Defaults(object):
