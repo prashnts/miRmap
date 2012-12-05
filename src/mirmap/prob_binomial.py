@@ -69,15 +69,27 @@ class mmProbBinomial(seed.mmSeed):
             #self.prob_binomials.append(1. - sp.stats.binom.cdf(self.target_seq.count(motif), self.len_target_seq-len(motif)+1, prob_motif(motif, alphabet, markov_order, transitions)))
             self.prob_binomials.append(1. - binom_cdf(self.target_seq.count(motif), self.len_target_seq-len(motif)+1, prob.prob_motif(motif, alphabet, markov_order, transitions)))
 
+    def get_prob_binomial(self, method=None):
+        """*P.over binomial* score with default parameters.
+
+           :param method: Method name used to combine target scores (Example: 'min').
+           :type method: str"""
+        if method is None:
+            method = 'min'
+        if hasattr(self, 'prob_binomials') is False:
+            self.eval_prob_binomial()
+        if method == 'min':
+            self._prob_binomial = min(self.prob_binomials)
+        elif method == 'prod':
+            self._prob_binomial = 1.
+            for p in self.prob_binomials:
+                self._prob_binomial *= p
+        return self._prob_binomial
+
     @property
     def prob_binomial(self):
         """*P.over binomial* score with default parameters."""
-        if hasattr(self, 'prob_binomials') is False:
-            self.eval_prob_binomial()
-        self._prob_binomial = 1.
-        for p in self.prob_binomials:
-            self._prob_binomial *= p
-        return self._prob_binomial
+        return self.get_prob_binomial()
 
 class Defaults(object):
     markov_order = 1
