@@ -261,21 +261,45 @@ class mmEvolution(seed.mmSeed):
             else:
                 self.selec_phylops.append(1.)
 
-    @property
-    def cons_bls(self):
-        """Branch Length Score (*BLS*) with default parameters."""
+    def get_cons_bls(self, method=None):
+        """Branch Length Score (*BLS*) score with default parameters.
+
+           :param method: Method name used to combine target scores (Example: 'max').
+           :type method: str"""
+        if method is None:
+            method = 'max'
         if hasattr(self, 'cons_blss') is False:
             self.eval_cons_bls()
-        self._cons_bls = sum(self.cons_blss) / float(len(self.cons_blss))
+        if method == 'max':
+            self._cons_bls = max(self.cons_blss)
+        elif method == 'avg':
+            self._cons_bls = sum(self.cons_blss) / float(len(self.cons_blss))
         return self._cons_bls
+
+    def get_selec_phylop(self, method=None):
+        """*PhyloP* score with default parameters.
+
+           :param method: Method name used to combine target scores (Example: 'min').
+           :type method: str"""
+        if method is None:
+            method = 'min'
+        if hasattr(self, 'selec_phylops') is False:
+            self.eval_selec_phylop()
+        if method == 'min':
+            self._selec_phylop = min(self.selec_phylops)
+        elif method == 'avg':
+            self._selec_phylop = sum(self.selec_phylops) / float(len(self.selec_phylops))
+        return self._selec_phylop
+
+    @property
+    def cons_bls(self):
+        """Branch Length Score (*BLS*) score with default parameters."""
+        return self.get_cons_bls()
 
     @property
     def selec_phylop(self):
         """*PhyloP* score with default parameters."""
-        if hasattr(self, 'selec_phylops') is False:
-            self.eval_selec_phylop()
-        self._selec_phylop = sum(self.selec_phylops) / float(len(self.selec_phylops))
-        return self._selec_phylop
+        return self.get_selec_phylop()
 
 class Defaults(object):
     # PhyloFit
