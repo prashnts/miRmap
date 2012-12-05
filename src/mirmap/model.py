@@ -13,6 +13,12 @@ from . import seed
 
 class mmModel(seed.mmSeed):
     def eval_score(self, model_name=None, model=None):
+        """Computes the *miRmap* score(s).
+
+           :param model_name: Model name.
+           :type model_name: str
+           :param model: Model with coefficients and intercept as keys.
+           :type model: dict"""
         # Parameter
         if model_name is None:
             if model is None:
@@ -32,6 +38,14 @@ class mmModel(seed.mmSeed):
                 if k != 'intercept':
                     score += getattr(self, k+'s')[its] * self.model[k]
             self.scores.append(score)
+
+    @property
+    def score(self):
+        """*miRmap* score with default parameters."""
+        if hasattr(self, 'scores') is False:
+            self.eval_score()
+        self._score = sum(self.scores)
+        return self._score
 
 class Defaults(object):
     models = {}
