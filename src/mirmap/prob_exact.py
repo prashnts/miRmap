@@ -68,15 +68,27 @@ class mmProbExact(seed.mmSeed):
             motif = self.target_seq[start_motif-1:end_motif]
             self.prob_exacts.append(if_spatt.get_exact_prob(utils.clean_seq(motif, alphabet), self.target_seq.count(motif), self.len_target_seq, alphabet, transitions, markov_order, 'o'))
 
+    def get_prob_exact(self, method=None):
+        """*P.over exact* score with default parameters.
+
+           :param method: Method name used to combine target scores (Example: 'min').
+           :type method: str"""
+        if method is None:
+            method = 'min'
+        if hasattr(self, 'prob_exacts') is False:
+            self.eval_prob_exact()
+        if method == 'min':
+            self._prob_exact = min(self.prob_exacts)
+        elif method == 'prod':
+            self._prob_exact = 1.
+            for p in self.prob_exacts:
+                self._prob_exact *= p
+        return self._prob_exact
+
     @property
     def prob_exact(self):
         """*P.over exact* score with default parameters."""
-        if hasattr(self, 'prob_exacts') is False:
-            self.eval_prob_exact()
-        self._prob_exact = 1.
-        for p in self.prob_exacts:
-            self._prob_exact *= p
-        return self._prob_exact
+        return self.get_prob_exact()
 
 class Defaults(object):
     markov_order = 1
