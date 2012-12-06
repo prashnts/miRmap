@@ -51,7 +51,10 @@ def predict_on_mim(args):
                     mimset.eval_cons_bls(aln_fname=aln_fname, tree='species.tree', fitting_tree=True)
                     mimset.eval_selec_phylop(aln_fname=aln_fname, mod_fname=mod_fname)
         mimset.eval_score()
-        return mirna[0], transcript[0], mimset.end_sites, mimset.seed_lengths, mimset.nb_mismatches_except_gu_wobbles, mimset.nb_gu_wobbles, mimset.tgs_aus, mimset.tgs_positions, mimset.tgs_pairing3ps, mimset.tgs_scores, mimset.dg_duplexs, mimset.dg_bindings, mimset.dg_duplex_seeds, mimset.dg_binding_seeds, mimset.dg_opens, mimset.dg_totals, mimset.prob_exacts, mimset.prob_binomials, mimset.cons_blss, mimset.selec_phylops, mimset.scores
+        if shared.combine:
+            return mirna[0], transcript[0], mimset.end_sites, mimset.seed_lengths, mimset.nb_mismatches_except_gu_wobbles, mimset.nb_gu_wobbles, mimset.tgs_au, mimset.tgs_position, mimset.tgs_pairing3p, mimset.tgs_score, mimset.dg_duplex, mimset.dg_binding, mimset.dg_duplex_seed, mimset.dg_binding_seed, mimset.dg_open, mimset.dg_total, mimset.prob_exact, mimset.prob_binomial, mimset.cons_bls, mimset.selec_phylop, mimset.score
+        else:
+            return mirna[0], transcript[0], mimset.end_sites, mimset.seed_lengths, mimset.nb_mismatches_except_gu_wobbles, mimset.nb_gu_wobbles, mimset.tgs_aus, mimset.tgs_positions, mimset.tgs_pairing3ps, mimset.tgs_scores, mimset.dg_duplexs, mimset.dg_bindings, mimset.dg_duplex_seeds, mimset.dg_binding_seeds, mimset.dg_opens, mimset.dg_totals, mimset.prob_exacts, mimset.prob_binomials, mimset.cons_blss, mimset.selec_phylops, mimset.scores
 
 def main(argv=None):
     # Parameters
@@ -65,9 +68,10 @@ def main(argv=None):
     group.add_argument('-b', '--mirna-tab', dest='mirna_fname_tab', action='store', help='miRNA tabulated file')
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('-t', '--transcript', dest='transcript_seqs', action='append', help='Transcript sequence')
-    parser.add_argument('-u', '--transcript-id', dest='transcript_ids', action='append', help='Transcript IDs')
+    parser.add_argument('-i', '--transcript-id', dest='transcript_ids', action='append', help='Transcript IDs')
     group.add_argument('-f', '--transcript-fasta', dest='transcript_fname_fasta', action='store', help='Transcript Fasta file')
-    group.add_argument('-c', '--transcript-tab', dest='transcript_fname_tab', action='store', help='Transcript tabulated file')
+    group.add_argument('-u', '--transcript-tab', dest='transcript_fname_tab', action='store', help='Transcript tabulated file')
+    parser.add_argument('-c', '--combine', dest='combine', action='store_true', help='Combine multiple targets (miRNA-mRNA 1 to 1 relationships)')
     parser.add_argument('-l', '--library', dest='library_path', action='store', help='External C libraries path')
     parser.add_argument('-e', '--exe', dest='exe_path', action='store', help='External programs path')
     parser.add_argument('-s', '--aln', dest='aln_path', action='store', help='Multiple sequences alignment(s) path')
@@ -99,6 +103,9 @@ def main(argv=None):
         logger.debug('Prediction defaults changed')
     except ImportError:
         logger.debug('Prediction defaults kept')
+
+    # Combining targets
+    shared.combine = args.combine
 
     # Loading external C libraries
     if args.library_path:
@@ -162,9 +169,12 @@ def main(argv=None):
         outf = open(args.output_fname, 'w')
     for mim in tsp_results:
         if mim is not None:
-            feats = zip(*mim[2:])
-            for imim in range(len(mim[2])):
-                outf.write('\t'.join([str(i) for i in [mim[0], mim[1], imim+1] + list(feats[imim])]) + '\n')
+            if args.combine:
+                outf.write('\t'.join([str(mim[0]), str(mim[1]), ','.join(map(str, mim[2])), ','.join(map(str, mim[3])), ','.join(map(str, mim[4])), ','.join(map(str, mim[5]))] + map(str, mim[6:])) + '\n')
+            else:
+                feats = zip(*mim[2:])
+                for imim in range(len(mim[2])):
+                    outf.write('\t'.join([str(i) for i in [mim[0], mim[1], imim+1] + list(feats[imim])]) + '\n')
     outf.close()
 
     # End
