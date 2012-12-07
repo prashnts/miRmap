@@ -9,12 +9,14 @@
 
 """Probability based on binomial distribution feature."""
 
+import functools
+
 from . import seed
 from . import prob
 
 def factorial(n):
     if n < 2: return 1
-    return reduce(lambda x, y: x*y, range(2, int(n)+1))
+    return functools.reduce(lambda x, y: x*y, range(2, int(n)+1))
 
 def n_choose_k(n, k):
     return (factorial(n)/(factorial(k)*factorial(n-k)))
