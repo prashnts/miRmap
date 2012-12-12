@@ -21,6 +21,7 @@ def predict_on_mim(args):
         mimset.exe_path = shared.exe_path
     mimset.find_potential_targets_with_seed()
     if len(mimset.end_sites) > 0:
+        shared.logger.debug('Evaluating mirna:%s transcript:%s'%(mirna[0], transcript[0]))
         # De novo features
         mimset.eval_tgs_au()
         mimset.eval_tgs_position()
@@ -87,6 +88,7 @@ def main(argv=None):
         logger = mylog.define_root_logger('mirmap', level=args.logging_level)
     except ImportError:
         import logging as logger
+    shared.logger = logger
     logger.debug('Starting on %s'%(socket.gethostname()))
 
     # Paths
