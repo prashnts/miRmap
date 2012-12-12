@@ -72,6 +72,7 @@ def main(argv=None):
     parser.add_argument('-i', '--transcript-id', dest='transcript_ids', action='append', help='Transcript IDs')
     group.add_argument('-f', '--transcript-fasta', dest='transcript_fname_fasta', action='store', help='Transcript Fasta file')
     group.add_argument('-u', '--transcript-tab', dest='transcript_fname_tab', action='store', help='Transcript tabulated file')
+    parser.add_argument('-z', '--site-id', dest='site_id', action='store_true', help='Add a column with site IDs')
     parser.add_argument('-c', '--combine', dest='combine', action='store_true', help='Combine multiple targets (miRNA-mRNA 1 to 1 relationships)')
     parser.add_argument('-l', '--library', dest='library_path', action='store', help='External C libraries path')
     parser.add_argument('-e', '--exe', dest='exe_path', action='store', help='External programs path')
@@ -176,7 +177,11 @@ def main(argv=None):
             else:
                 feats = zip(*mim[2:])
                 for imim in range(len(mim[2])):
-                    outf.write('\t'.join([str(i) for i in [mim[0], mim[1], imim+1] + list(feats[imim])]) + '\n')
+                    if args.site_id:
+                        fields = [str(i) for i in [mim[0], mim[1], imim+1] + list(feats[imim])]
+                    else:
+                        fields = [str(i) for i in [mim[0], mim[1]] + list(feats[imim])]
+                    outf.write('\t'.join(fields) + '\n')
     outf.close()
 
     # End
