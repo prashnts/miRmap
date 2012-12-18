@@ -163,7 +163,7 @@ class mmEvolution(seed.mmSeed):
             else:
                 self.cons_blss.append(0.)
 
-    def eval_selec_phylop(self, aln_fname=None, aln=None, aln_format=None, aln_alphabet=None, mod_fname=None, libphast=None, pathphast=None, method=None, mode=None, motif_def=None, motif_upstream_extension=None, motif_downstream_extension=None):
+    def eval_selec_phylop(self, aln_fname=None, aln=None, aln_format=None, aln_alphabet=None, aln_quality=None, mod_fname=None, libphast=None, pathphast=None, method=None, mode=None, motif_def=None, motif_upstream_extension=None, motif_downstream_extension=None):
         """Computes the *PhyloP* score.
 
            :param aln_fname: Alignment filename.
@@ -174,6 +174,8 @@ class mmEvolution(seed.mmSeed):
            :type aln_format: str
            :param aln_alphabet: List of nucleotides to consider in the aligned sequences (others get filtered).
            :type aln_alphabet: list
+           :param aln_quality: Check alignment quality (must return True if alignment is fine).
+           :type aln_quality: function
            :param mod_fname: Model filename.
            :type mod_fname: str
            :param libphast: Link to the Phast library.
@@ -201,6 +203,8 @@ class mmEvolution(seed.mmSeed):
             raise Exception('Alignment format undetected')
         if aln_alphabet is None:
             aln_alphabet = Defaults.aln_alphabet
+        if aln_quality is None:
+            aln_quality = Defaults.aln_quality
         if pathphast is not None:
             if_phast = if_exe_phast.Phast(pathphast)
         elif libphast is not None:
@@ -245,6 +249,7 @@ class mmEvolution(seed.mmSeed):
                 if seq.find(motif) != -1:
                     species_with_seed.append(seq_name)
             # phyloP
+            pval = 1.0
             if len(species_with_seed) > 1:
                 # Extract alignment
                 start_motif_in_aln = seqs_coords[ref_species][start_motif-1]
@@ -255,11 +260,10 @@ class mmEvolution(seed.mmSeed):
                         partial_seqs[seq_name] = seq[start_motif_in_aln - 1:end_motif_in_aln]
                 partial_seqs = remove_gap_column(partial_seqs)
                 aln = '\n'.join(['> %s\n%s'%(seq_name, seq) for seq_name, seq in partial_seqs.items()])
-                # Compute p-value
-                pval = if_phast.phylop(method=method, mode=mode, mod_fname=mod_fname, aln=aln, aln_format='FASTA')
-                self.selec_phylops.append(pval)
-            else:
-                self.selec_phylops.append(1.)
+                if aln_quality(aln):
+                    # Compute p-value
+                    pval = if_phast.phylop(method=method, mode=mode, mod_fname=mod_fname, aln=aln, aln_format='FASTA')
+            self.selec_phylops.append(pval)
 
     def get_cons_bls(self, method=None):
         """Branch Length Score (*BLS*) score with default parameters.
@@ -310,3 +314,7 @@ class Defaults(object):
     mode = 'CONACC'
     #
     aln_alphabet = ['A', 'T', 'C', 'G', 'N']
+
+    @staticmethod
+    def aln_quality(aln):
+        return True
