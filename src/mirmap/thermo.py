@@ -31,7 +31,7 @@ def get_pairing_string(pairing):
 
 class mmThermo(seed.mmSeed):
     def eval_dg_duplex(self, librna=None, pathrna=None, mirna_start_pairing=None, temperature=None):
-        """Computes the *ΔG duplex* and *ΔG binding* scores.
+        """Computes the *ΔG duplex*, *ΔG binding*, *ΔG seed duplex* and *ΔG seed binding* scores.
 
            :param librna: Link to the Vienna RNA library.
            :type librna: :class:`LibraryLink`
