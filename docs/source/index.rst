@@ -5,7 +5,7 @@
 
 The :mod:`miRmap` library is a Python_ library predicting the repression strength of microRNA (miRNA) targets. The model combines:
 
- - **thermodynamic** features: *ΔG duplex*, *ΔG binding*, *ΔG open* and *ΔG total*,
+ - **thermodynamic** features: *ΔG duplex*, *ΔG binding*, *ΔG seed duplex*, *ΔG seed binding*, *ΔG open* and *ΔG total*,
  - **evolutionary** features: *BLS* and *PhyloP*,
  - **probabilistic** features: *P.over binomial* and *P.over exact*, and
  - **sequence-based** features: *AU content*, *UTR position* and *3' pairing*.
@@ -34,7 +34,9 @@ The :mod:`miRmap` library has the following requirements:
 
 2. For the evolutionary features, the Python_ library :mod:`DendroPy` is needed for tree manipulation. You can install `DendroPy <http://pypi.python.org/pypi/DendroPy/>`_ directly from the `Python Package Index <http://pypi.python.org>`_.
 
-3. C librairies. A compiled version of the 3 libraries (\*.so) is included in the :mod:`miRmap` distribution. If you want/have to compile them, please follow these intructions:
+3. External dependencies. As of miRmap 1.1, external computation can be done with libraries or executables. Compiling executables is easier, but less computing efficient.
+
+ 3.1 C librairies. A compiled version of the 3 libraries (\*.so) is included in the :mod:`miRmap` distribution. If you want/have to compile them, please follow these intructions:
 
  - For the thermodynamic features, the `Vienna RNA <http://www.tbi.univie.ac.at/RNA>`_ library is required.
 
@@ -72,13 +74,15 @@ The :mod:`miRmap` library has the following requirements:
    cmake -DWITH_SHARED_LIB=ON ..
    make
 
-From the directory you compiled the C libraries:
+ From the directory you compiled the C libraries:
 
- ::
+  ::
 
-  mv spatt-<version>/libspatt2/libspatt2.so mirmap/libs/default
-  mv ViennaRNA-<version>/lib/libRNAvienna.so mirmap/libs/default
-  mv phast/lib/sharedlib/libphast.so mirmap/libs/default
+   mv spatt-<version>/libspatt2/libspatt2.so mirmap/libs/default
+   mv ViennaRNA-<version>/lib/libRNAvienna.so mirmap/libs/default
+   mv phast/lib/sharedlib/libphast.so mirmap/libs/default
+
+ 3.2 Executables. No specific requirements is needed: please follow the instructions included in the `Vienna RNA <http://www.tbi.univie.ac.at/RNA>`_, `PHAST <http://compgen.bscb.cornell.edu/phast>`_, and `Spatt <http://www.mi.parisdescartes.fr/~nuel/spatt>`_ packages.
 
 Usage
 =====
@@ -114,12 +118,15 @@ Example with the pure Python features.
       3' pairing                     1.00000
       Probability (Binomial)         0.03312
 
-With the C libraries installed:
+With the C libraries/executables installed:
 
 .. code-block:: python
 
     >>> import mirmap.library_link
+    >>> # For libraries
     >>> mim.libs = mirmap.library_link.LibraryLink('libs/compiled') # Change to the path where you unzipped the *.so files
+    >>> # For executables (if they are not in your PATH)
+    >>> mim.exe_path = 'libs/compiled' # Change to the path where you unzipped the exe files
     >>> mim.dg_duplex
     -13.5
     >>> mim.dg_open
