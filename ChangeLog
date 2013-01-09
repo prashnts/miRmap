@@ -1,0 +1,18 @@
+2013-01-09 Charles E. Vejnar <charles.vejnar@unige.ch>
+
+    * miRmap release 1.1
+
+    * Adds ΔG seed duplex and ΔG seed binding features
+
+    * Adds interfaces to Vienna RNA, PHAST, and Spatt executables
+
+    * Updates miRmap models
+
+    * Corrects bugs (mirmap_runs.py...)
+
+2012-02-01 Charles E. Vejnar <charles.vejnar@unige.ch>
+
+    * miRmap release 1.0
+
+    * First public release
+
