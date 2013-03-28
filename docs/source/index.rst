@@ -16,7 +16,7 @@ The :mod:`miRmap` library is a Python_ library predicting the repression strengt
 Download
 ========
 
-The stable releases of :mod:`miRmap` are available at http://cegg.unige.ch/mirmap.
+The stable releases of :mod:`miRmap` are available at http://mirmap.ezlab.org.
 
 .. note::
 
