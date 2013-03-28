@@ -7,5 +7,5 @@ See `miRmap web site <http://cegg.unige.ch/mirmap>`_ for installation and usage 
 
 The miRmap library is distributed under the GNU GPL v3 (see /LICENCE).
 
-Copyright (C) 2011-2012 Charles E. Vejnar
+Copyright (C) 2011-2013 Charles E. Vejnar
 
