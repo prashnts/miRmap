@@ -20,18 +20,14 @@ class mmModel(seed.mmSeed):
            :param model: Model with coefficients and intercept as keys.
            :type model: dict"""
         # Parameter
-        if model_name is None:
-            if model is None:
-                self.model = Defaults.model
-            else:
-                self.model = model
-        else:
+        self.model = model
+        if model_name is not None:
             self.model = Defaults.models[model_name]
         # Reset
         self.scores = []
         # Compute
         for its in range(len(self.end_sites)):
-            if Defaults.model_select:
+            if self.model is None and Defaults.model_select:
                 self.model = Defaults.model_select(self, its)
             score = self.model['intercept']
             for k in self.model.keys():
