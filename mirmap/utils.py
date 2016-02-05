@@ -11,7 +11,13 @@
 
 import collections
 import itertools
-import string
+
+try:
+    # Python 3 support
+    maketrans = ''.maketrans
+except AttributeError:
+    # fallback for Python 2
+    from string import maketrans
 
 def grouper(n, iterable, fillvalue=None):
     """http://docs.python.org/library/itertools.html#recipes"""
@@ -57,8 +63,8 @@ def reverse_complement(seq):
     """Returns the reverse complement sequence. New string object.
     (Adapted from BioPython)"""
     if 'U' in seq or 'u' in seq:
-        ttable = string.maketrans("ACGUacgu", "UGCAugca")
+        ttable = maketrans("ACGUacgu", "UGCAugca")
     else:
-        ttable = string.maketrans("ACGTacgt", "TGCAtgca")
+        ttable = maketrans("ACGTacgt", "TGCAtgca")
     seq = seq[-1::-1].translate(ttable)
     return seq
