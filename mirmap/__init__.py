@@ -14,14 +14,6 @@ from . import prob_binomial
 from . import report
 from . import targetscan
 
-from . import evolution
-from . import prob_exact
-from . import thermo
-
-class mm(evolution.mmEvolution, model.mmModel, prob_binomial.mmProbBinomial, prob_exact.mmProbExact, report.mmReport, thermo.mmThermo, targetscan.mmTargetScan):
-    """miRNA and mRNA containing class."""
-    pass
-
-class mmPP(model.mmModel, prob_binomial.mmProbBinomial, report.mmReport, targetscan.mmTargetScan):
+class mm(model.mmModel, prob_binomial.mmProbBinomial, report.mmReport, targetscan.mmTargetScan):
     """miRNA and mRNA containing class with pure Python methods only."""
     pass
