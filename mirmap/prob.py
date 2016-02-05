@@ -9,7 +9,7 @@
 
 """Basic functions for probability features: Transitions matrix, motif probability..."""
 
-from . import utils
+from mirmap import utils
 
 def permutations(items, n):
     if n == 0:
@@ -31,7 +31,7 @@ def get_transitions(seq, alphabet, markov_order):
     for motif in motifs:
         transitions.append(counts[motif])
     transitions = list(utils.grouper(len(alphabet), transitions))
-    sums = map(sum, transitions)
+    sums = list(map(sum, transitions))
     for i in range(len(transitions)):
         if sums[i] != 0:
             transitions[i] = [transitions[i][j] / float(sums[i]) for j in range(len(transitions[i]))]

@@ -14,15 +14,18 @@ import itertools
 
 try:
     # Python 3 support
+    from itertools import zip_longest
     maketrans = ''.maketrans
-except AttributeError:
+except (AttributeError, ImportError):
     # fallback for Python 2
     from string import maketrans
+    from itertools import izip_longest
+    zip_longest = izip_longest
 
 def grouper(n, iterable, fillvalue=None):
     """http://docs.python.org/library/itertools.html#recipes"""
     args = [iter(iterable)] * n
-    return itertools.izip_longest(fillvalue=fillvalue, *args)
+    return zip_longest(fillvalue=fillvalue, *args)
 
 def flatten(l1d):
     return list(itertools.chain.from_iterable(l1d))

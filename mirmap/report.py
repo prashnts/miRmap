@@ -9,7 +9,7 @@
 
 """Reporting methods."""
 
-from . import seed
+from mirmap import seed
 
 def get_mirna_pairing_string(pairing):
     """Returns the pairing with the dots and pipes notation"""
@@ -83,4 +83,4 @@ class mmReport(seed.mmSeed):
                 report_lines.append('  %-30s% .5f'%('Conservation (PhyloP)', self.selec_phylops[its]))
             except AttributeError:
                 pass
-        return '\n'.join(report_lines)
+        return "\n".join(report_lines)

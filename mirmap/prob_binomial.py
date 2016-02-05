@@ -11,8 +11,8 @@
 
 import functools
 
-from . import seed
-from . import prob
+from mirmap import seed
+from mirmap import prob
 
 def factorial(n):
     if n < 2: return 1

@@ -20,7 +20,8 @@ def is_gu_wobble(b1, b2):
 
 def find_pairings(target_subseq, mirna_seq, mirna_skip_start, mismatch_end):
     pairing = []
-    # last_pairing is updated each time there is a match/GU ; we can return a pairing without mismatch at the end.
+    # last_pairing is updated each time there is a match/GU
+    # we can return a pairing without mismatch at the end.
     last_pairing = 0
     nb_mismatches_except_gu_wobbles = 0
     nb_gu_wobbles = 0
@@ -37,10 +38,9 @@ def find_pairings(target_subseq, mirna_seq, mirna_skip_start, mismatch_end):
         else:
             nb_mismatches_except_gu_wobbles += 1
             pairing.append(0)
-    if mismatch_end:
-        return nb_mismatches_except_gu_wobbles, nb_gu_wobbles, pairing
-    else:
-        return nb_mismatches_except_gu_wobbles, nb_gu_wobbles, pairing[:last_pairing + 1]
+
+    return (nb_mismatches_except_gu_wobbles, nb_gu_wobbles,
+            pairing if mismatch_end else pairing[: last_pairing + 1])
 
 def get_motif_coordinates(end_site, motif_def, pairing,
                           motif_upstream_extension, motif_downstream_extension,
@@ -61,7 +61,8 @@ def get_motif_coordinates(end_site, motif_def, pairing,
         start_motif = end_site - len(pairing) + 1 - motif_upstream_extension
         end_motif = end_site - mirna_start_pairing + motif_downstream_extension
     elif motif_def == 'site':
-        start_motif = end_site - min_target_length + 1 - motif_upstream_extension
+        start_motif = (end_site - min_target_length + 1 -
+                       motif_upstream_extension)
         end_motif = end_site + motif_downstream_extension
     return start_motif, end_motif
 
@@ -145,7 +146,8 @@ class mmSeed(object):
                                 self.mirna_start_pairing - 1)
                     self.end_sites.append(end_site)
                     self.seed_lengths.append(seed_length)
-                    self.nb_mismatches_except_gu_wobbles.append(nb_mismatches_except_gu_wobbles)
+                    self.nb_mismatches_except_gu_wobbles.append(
+                        nb_mismatches_except_gu_wobbles)
                     self.nb_gu_wobbles.append(nb_gu_wobbles)
                     self.pairings.append(pairing)
                     if self.take_best:

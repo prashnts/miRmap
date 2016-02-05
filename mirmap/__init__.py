@@ -14,6 +14,7 @@ from mirmap import prob_binomial
 from mirmap import report
 from mirmap import targetscan
 
-class mm(model.mmModel, prob_binomial.mmProbBinomial, report.mmReport, targetscan.mmTargetScan):
+class mm(model.mmModel, prob_binomial.mmProbBinomial,
+         report.mmReport, targetscan.mmTargetScan):
     """miRNA and mRNA containing class with pure Python methods only."""
     pass
