@@ -31,7 +31,10 @@ def binom_cdf(k, n, p):
     return cump
 
 class mmProbBinomial(seed.mmSeed):
-    def eval_prob_binomial(self, markov_order=None, alphabet=None, transitions=None, motif_def=None, motif_upstream_extension=None, motif_downstream_extension=None):
+    def eval_prob_binomial(self, markov_order=None, alphabet=None,
+                           transitions=None, motif_def=None,
+                           motif_upstream_extension=None,
+                           motif_downstream_extension=None):
         """Computes the *P.over binomial* score.
 
            :param markov_order: Markov Chain order
