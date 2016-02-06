@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 
+from mirmap import iseed
+
 
 class miRmap(object):
   """
@@ -8,6 +10,7 @@ class miRmap(object):
   Args:
     seq_mir (str): miRNA sequence
     seq_mrn (str): mRNA sequence
+    seed_args (dict): Seed Class init args
   """
 
   def __init__(self, **kwargs):
@@ -19,6 +22,7 @@ class miRmap(object):
 
     self.__dict__.update(kwargs)
     self.__init_models()
+    self.__init_seed(**kwargs.get('seed_args', {}))
 
   def __init_models(self):
     """
@@ -73,8 +77,21 @@ class miRmap(object):
       }
     }
 
-  def _init_seed(self, **args):
-    pass
+  def __init_seed(self, **args):
+    arg_init = {
+      'target_seq': self.seq_mrn,
+      'mirna_seq': self.seq_mir
+    }
+    args.update(arg_init)
+    self.__seed_m = iseed.mmSeed(**args)
+
+  @property
+  def seed(self):
+    return self.__seed_m
+
+  @seed.setter
+  def seed(self, kwargs):
+    self.__seed_m = iseed.mmSeed(**kwargs)
 
   def _eval_score(self, **kwargs):
     """

@@ -39,6 +39,20 @@ class TestIntegratedModel(unittest.TestCase):
         }
         self.assertEqual(temp.models.keys(), default_models.keys())
 
+    def test_seed_property(self):
+        temp = integrated_model.miRmap(seq_mrn="augcaugc", seq_mir="augc")
+        self.assertIsInstance(temp.seed, iseed.mmSeed)
+        self.assertEqual(temp.seed.target_seq, "AUGCAUGC")
+        self.assertEqual(temp.seed.mirna_seq, "AUGC")
+
+        temp.seed = {
+            'target_seq': 'augcaugcaugc',
+            'mirna_seq': 'cgua'
+        }
+
+        self.assertEqual(temp.seed.target_seq, "AUGCAUGCAUGC")
+        self.assertEqual(temp.seed.mirna_seq, "CGUA")
+
 class TestISeed(unittest.TestCase):
     _mirs = mirmap.utils.load_fasta('tests/input/hsa-miR-30a-3p.fa')
     _mrnas = mirmap.utils.load_fasta('tests/input/NM_024573.fa')
