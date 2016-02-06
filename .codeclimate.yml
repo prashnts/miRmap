@@ -1,0 +1,9 @@
+engines:
+  pep8:
+    enabled: true
+  fixme:
+    enabled: true
+
+ratings:
+   paths:
+   - "mirmap/*.py"
