@@ -13,6 +13,11 @@ import operator
 
 from mirmap import seed
 
+try:
+    operator.div = operator.truediv
+except AttributeError:
+    pass
+
 def get_targetscan_ts_type(seed_length, nt1):
     """
     Returns the target site type according to TargetScan terminology.

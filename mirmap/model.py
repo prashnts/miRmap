@@ -89,7 +89,7 @@ class Defaults(object):
         'tgs_position': 9.44582844229299e-06,
         'tgs_pairing3p': -0.0111209267382849,
         'prob_binomial': 0.0701619992923641,
-        'cons_bls': -0.00646548621345819,
+        # 'cons_bls': -0.00646548621345819,
         'intercept': 0.121104869645859,
     }
     models['python_only_seed7'] = {
@@ -97,7 +97,7 @@ class Defaults(object):
         'tgs_position': 6.34603935320321e-05,
         'tgs_pairing3p': -0.0207672870210752,
         'prob_binomial': 0.378665477250754,
-        'cons_bls': -0.0552713344740971,
+        # 'cons_bls': -0.0552713344740971,
         'intercept': 0.150015113841088,
     }
 
