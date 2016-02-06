@@ -91,6 +91,12 @@ class miRmap(object):
 
   @seed.setter
   def seed(self, kwargs):
+    #: Cannot update the sequences. HAVE to update the top level sequences.
+    arg_init = {
+      'target_seq': self.seq_mrn,
+      'mirna_seq': self.seq_mir
+    }
+    kwargs.update(arg_init)
     self.__seed_m = iseed.mmSeed(**kwargs)
 
   def _eval_score(self, **kwargs):

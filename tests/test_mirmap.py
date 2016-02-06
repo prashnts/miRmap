@@ -44,14 +44,30 @@ class TestIntegratedModel(unittest.TestCase):
         self.assertIsInstance(temp.seed, iseed.mmSeed)
         self.assertEqual(temp.seed.target_seq, "AUGCAUGC")
         self.assertEqual(temp.seed.mirna_seq, "AUGC")
-
+        self.assertEqual(temp.seed.min_target_length, len("AUGC"))
         temp.seed = {
-            'target_seq': 'augcaugcaugc',
-            'mirna_seq': 'cgua'
+            'target_seq': 'augcaugcaugc',   #: Wont be updated
+            'mirna_seq': 'cgua',            #: Wont be updated
+            'min_target_length': 2          #: Will be updated
         }
 
-        self.assertEqual(temp.seed.target_seq, "AUGCAUGCAUGC")
-        self.assertEqual(temp.seed.mirna_seq, "CGUA")
+        self.assertNotEqual(temp.seed.target_seq, "AUGCAUGCAUGC")
+        self.assertNotEqual(temp.seed.mirna_seq, "CGUA")
+
+        self.assertEqual(temp.seed.target_seq, "AUGCAUGC")
+        self.assertEqual(temp.seed.mirna_seq, "AUGC")
+
+        self.assertNotEqual(temp.seed.min_target_length, len("AUGC"))
+        self.assertEqual(temp.seed.min_target_length, 2)
+
+        temp.seed = {
+            'min_target_length': 10         #: Will be updated
+        }
+        self.assertNotEqual(temp.seed.min_target_length, len("AUGC"))
+        self.assertEqual(temp.seed.min_target_length, 10)
+
+        temp.seed = {}  #: Reset
+        self.assertEqual(temp.seed.min_target_length, len("AUGC"))
 
 class TestISeed(unittest.TestCase):
     _mirs = mirmap.utils.load_fasta('tests/input/hsa-miR-30a-3p.fa')
