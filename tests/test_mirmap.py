@@ -69,6 +69,39 @@ class TestIntegratedModel(unittest.TestCase):
         temp.seed = {}  #: Reset
         self.assertEqual(temp.seed.min_target_length, len("AUGC"))
 
+    def test_model_property(self):
+        temp = integrated_model.miRmap(seq_mrn="augcaugc", seq_mir="augc")
+
+        self.assertEqual(temp.model, 'python_only_seed')
+        self.assertEqual(temp.model_select(6),
+                         temp.models.get('python_only_seed6'))
+        self.assertEqual(temp.model_select(7),
+                         temp.models.get('python_only_seed7'))
+        self.assertEqual(temp.model_select(8),
+                         temp.models.get('python_only_seed7'))
+
+        temp.model = 'full_seed'
+        self.assertEqual(temp.model, 'full_seed')
+        self.assertEqual(temp.model_select(6),
+                         temp.models.get('full_seed6'))
+        self.assertEqual(temp.model_select(7),
+                         temp.models.get('full_seed7'))
+        self.assertEqual(temp.model_select(8),
+                         temp.models.get('full_seed7'))
+
+        with self.assertRaises(ValueError):
+            temp.model_select(2)
+
+    def test_eval_score(self):
+        temp = integrated_model.miRmap(seq_mrn="TEST_MRN", seq_mir="TEST_MIR")
+
+        with self.assertRaises(AttributeError):
+            temp._eval_score()
+
+        temp.routine()
+        self.assertIsInstance(temp.scores, list)
+
+
 class TestISeed(unittest.TestCase):
     _mirs = mirmap.utils.load_fasta('tests/input/hsa-miR-30a-3p.fa')
     _mrnas = mirmap.utils.load_fasta('tests/input/NM_024573.fa')

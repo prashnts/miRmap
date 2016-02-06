@@ -76,6 +76,7 @@ class miRmap(object):
           'intercept': 0.150015113841088,
       }
     }
+    self.model = 'python_only_seed'
 
   def __init_seed(self, **args):
     arg_init = {
@@ -99,25 +100,39 @@ class miRmap(object):
     kwargs.update(arg_init)
     self.__seed_m = iseed.mmSeed(**kwargs)
 
-  def _eval_score(self, **kwargs):
+  @property
+  def model(self):
+    return self.__selected_model
+
+  @model.setter
+  def model(self, val):
+    self.__selected_model = val
+
+  def model_select(self, count):
+    if count == 6:
+      return self.models.get(self.__selected_model + "6")
+    elif count >= 7:
+      return self.models.get(self.__selected_model + "7")
+    raise ValueError("Count gotta be greater or equal to 6.")
+
+  def routine(self, **kwargs):
+    seed_targ = kwargs.get('arg_seed_tar', {})
+    self.seed.find_potential_targets_with_seed(**seed_targ)
+    self._eval_score()
+
+  def _eval_score(self):
     """
     Computes the *miRmap* score(s)
     """
-
-    self.model = model
-    if model_name is not None:
-        self.model = Defaults.models[model_name]
     # Reset
     self.scores = []
     # Compute
-    for its in range(len(self.end_sites)):
-        if self.model is None and Defaults.model_select:
-            self.model = Defaults.model_select(self, its)
-        score = self.model['intercept']
+    for i in range(len(self.seed.end_sites)):
+      model = self.model_select(self.seed.seed_lengths[i])
+      score = model['intercept']
 
-        for k in self.model.keys():
-            if k != 'intercept':
-                score += getattr(self, k+'s')[its] * self.model[k]
-        self.scores.append(score)
+      for k, v in self.model:
+        if k != 'intercept':
+          score += getattr(self.seed, k + 's')[i] * self.model[k]
 
-    pass
+      self.scores.append(score)
