@@ -73,6 +73,9 @@ class miRmap(object):
       }
     }
 
+  def _init_seed(self, **args):
+    pass
+
   def _eval_score(self, **kwargs):
     """
     Computes the *miRmap* score(s)
