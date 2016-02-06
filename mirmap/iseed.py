@@ -11,12 +11,14 @@
 
 from mirmap import utils
 
+
 def is_gu_wobble(b1, b2):
     """
     Check if 2 nts are a GU wobble if the first sequence was reverse
     complemented.
     """
     return (b1 == 'C' and b2 == 'U') or (b1 == 'A' and b2 == 'G')
+
 
 def find_pairings(target_subseq, mirna_seq, mirna_skip_start, mismatch_end):
     pairing = []
@@ -41,6 +43,7 @@ def find_pairings(target_subseq, mirna_seq, mirna_skip_start, mismatch_end):
 
     return (nb_mismatches_except_gu_wobbles, nb_gu_wobbles,
             pairing if mismatch_end else pairing[: last_pairing + 1])
+
 
 def get_motif_coordinates(end_site, motif_def, pairing,
                           motif_upstream_extension, motif_downstream_extension,

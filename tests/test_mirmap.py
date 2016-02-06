@@ -17,19 +17,27 @@ class TestRNAvienna(unittest.TestCase):
         result = mim.end_sites
         self.assertEqual([931], result)
 
+
 class TestIntegratedModel(unittest.TestCase):
     def test_init(self):
         with self.assertRaises(TypeError):
             #: No Args
             integrated_model.miRmap()
-            integrated_model.miRmap(seq_mir = "TEST")
-            integrated_model.miRmap(seq_mrn = "TEST")
+            integrated_model.miRmap(seq_mir="TEST")
+            integrated_model.miRmap(seq_mrn="TEST")
 
-        temp = integrated_model.miRmap(seq_mrn = "TEST_MRN", seq_mir = "TEST_MIR")
+        temp = integrated_model.miRmap(seq_mrn="TEST_MRN", seq_mir="TEST_MIR")
         self.assertIsInstance(temp, integrated_model.miRmap, msg="Instance Ok")
         self.assertEqual(temp.seq_mrn, "TEST_MRN", msg="mRNA Ok")
         self.assertEqual(temp.seq_mir, "TEST_MIR", msg="miRNA Ok")
 
+        default_models = {
+            'full_seed6': {},
+            'full_seed7': {},
+            'python_only_seed6': {},
+            'python_only_seed7': {}
+        }
+        self.assertEqual(temp.models.keys(), default_models.keys())
 
 class TestISeed(unittest.TestCase):
     _mirs = mirmap.utils.load_fasta('tests/input/hsa-miR-30a-3p.fa')
