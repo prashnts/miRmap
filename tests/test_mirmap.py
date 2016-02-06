@@ -19,6 +19,10 @@ class TestRNAvienna(unittest.TestCase):
 
 
 class TestIntegratedModel(unittest.TestCase):
+    _mirs = mirmap.utils.load_fasta('tests/input/hsa-miR-30a-3p.fa')
+    _mrnas = mirmap.utils.load_fasta('tests/input/NM_024573.fa')
+    maxDiff = None
+
     def test_init(self):
         with self.assertRaises(TypeError):
             #: No Args
@@ -96,10 +100,24 @@ class TestIntegratedModel(unittest.TestCase):
         temp = integrated_model.miRmap(seq_mrn="TEST_MRN", seq_mir="TEST_MIR")
 
         with self.assertRaises(AttributeError):
+            temp.scores
+
+        with self.assertRaises(AttributeError):
             temp._eval_score()
 
         temp.routine()
         self.assertIsInstance(temp.scores, list)
+
+        args = {
+            'seq_mrn': self._mrnas['NM_024573'],
+            'seq_mir': self._mirs['hsa-miR-30a-3p'],
+        }
+        obj = integrated_model.miRmap(**args)
+        obj.routine()
+
+        self.assertIsInstance(temp.scores, list)
+
+        print(obj.scores)
 
 
 class TestISeed(unittest.TestCase):

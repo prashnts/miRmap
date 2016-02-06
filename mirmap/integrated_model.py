@@ -131,8 +131,8 @@ class miRmap(object):
       model = self.model_select(self.seed.seed_lengths[i])
       score = model['intercept']
 
-      for k, v in self.model:
+      for k, v in model.items():
         if k != 'intercept':
-          score += getattr(self.seed, k + 's')[i] * self.model[k]
+          score += getattr(self.seed, k + 's')[i] * model[k]
 
       self.scores.append(score)
