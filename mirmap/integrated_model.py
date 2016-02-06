@@ -18,3 +18,9 @@ class miRmap(object):
       raise TypeError("miRNA and mRNA sequences are Required Parameters.")
 
     self.__dict__.update(kwargs)
+
+  def __init_seed(self):
+    """
+    Initialize the Seed Class.
+    """
+    pass
