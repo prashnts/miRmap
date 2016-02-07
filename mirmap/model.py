@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from mirmap import seed, targetscan, prob_binomial
-from mirmap.utils import rgetattr
+from mirmap.utils import rgetattr, gen_dot_pipe_notation
 
 
 class miRmap(object):
@@ -79,6 +79,34 @@ class miRmap(object):
           'intercept': 0.150015113841088,
       }
     }
+    self.model_maps = {
+      '_thermodynamic.dg_duplex':       'ΔG duplex (kcal/mol)',
+      '_thermodynamic.dg_bindings':     'ΔG binding (kcal/mol)',
+      '_thermodynamic.dg_opens':        'ΔG open (kcal/mol)',
+      '_thermodynamic.dg_totals':       'ΔG total (kcal/mol)',
+      '_target_scan.tgs_aus':           'AU content',
+      '_target_scan.tgs_pairing3ps':    '3\' pairing',
+      '_target_scan.tgs_scores':        'TargetScan score',
+      'prob_exact':                     'Probability (Exact)',
+      '_prob_binomial.prob_binomials':  'Probability (Binomial)',
+      'cons_bls':       'Conservation (BLS)',
+      'selec_phylop':   'Conservation (PhyloP)',
+    }
+
+    self.display_order = [
+      '_thermodynamic.dg_duplex',
+      '_thermodynamic.dg_bindings',
+      '_thermodynamic.dg_opens',
+      '_thermodynamic.dg_totals',
+      '_target_scan.tgs_aus',
+      '_target_scan.tgs_pairing3ps',
+      '_target_scan.tgs_scores',
+      'prob_exact',
+      '_prob_binomial.prob_binomials',
+      'cons_bls',
+      'selec_phylop',
+    ]
+
     self.model = 'python_only_seed'
 
   def __init_seed(self, **args):
@@ -132,3 +160,45 @@ class miRmap(object):
           score += rgetattr(self, k + 's')[i] * model[k]
 
       self.scores.append(score)
+    return self.scores
+
+  @property
+  def score(self):
+    try:
+      return self.scores
+    except AttributeError:
+      return self._eval_score()
+
+  @property
+  def report(self):
+    if not self.scores:
+      self.routine()
+
+    report_lines = []
+    for end_site, i in enumerate(self._seed.end_sites):
+      start = max(0, end_site - self._seed.len_mirna_seq - 10)
+      end = end_site + 10
+      report_lines.append((
+        str(start + 1) +
+        ' ' * (end_site - start - len(str(start + 1)) - 1) +
+        str(end_site)
+      ))
+      report_lines.append('|' + ' ' * (end_site - start - 2) + '|')
+      report_lines.append(self._seed.target_seq[start:end])
+      seed_pairing_string = gen_dot_pipe_notation(self._seed.pairings[i])
+      report_lines.append((
+        ' ' * (end_site - len(seed_pairing_string) - start) +
+        seed_pairing_string
+      ))
+      report_lines.append((
+        ' ' * (end_site - self._seed.len_mirna_seq - start) +
+        self._seed.mirna_seq[::-1]
+      ))
+
+      model = self.model_select(self._seed.seed_lengths[i])
+
+      for k in self.display_order:
+        if k in model.keys():
+          report_lines.append('  %-30s% .5f'%(k, rgetattr(self, k)[i]))
+
+    return "\n".join(report_lines)

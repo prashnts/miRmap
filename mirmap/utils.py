@@ -60,3 +60,14 @@ def reverse_complement(seq):
 
 def rgetattr(obj, attr):
     return functools.reduce(getattr, [obj]+attr.split('.'))
+
+
+def gen_dot_pipe_notation(pairing):
+    """Returns the pairing with the dots and pipes notation"""
+    string = ''
+    for i in pairing[::-1]:
+        if i == 0:
+            string += '.'
+        else:
+            string += '|'
+    return string
