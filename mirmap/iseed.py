@@ -79,32 +79,19 @@ class mmSeed(object):
         mirna_seq* (str): miRNA Sequence
         min_target_length (int): Target Length Threshold
 
+        mirna_start_pairing (int): Starting position of the seed in the
+            miRNA (from the 5').
+        allowed_lengths (list): List of seed length(s).
+        allowed_gu_wobbles (dict): For each seed length (key), how many GU
+            wobbles are allowed (value).
+        allowed_mismatches (dict): For each seed length (key), how many
+            mismatches are allowed (value).
+        take_best (bool): If seed matches are overlapping, taking or not
+            the longest.
     *: Required
     """
 
     def __init__(self, **kwargs):
-        self.target_seq = kwargs['target_seq'].upper()
-        self.mirna_seq = kwargs['mirna_seq'].upper()
-        self.len_target_seq = len(self.target_seq)
-        self.len_mirna_seq = len(self.mirna_seq)
-        self.min_target_length = kwargs.get('min_target_length',
-                                            self.len_mirna_seq)
-
-    def find_potential_targets_with_seed(self, **kwargs):
-        """
-        Searches for seed(s) in the target sequence.
-
-        Args:
-            mirna_start_pairing (int): Starting position of the seed in the
-                miRNA (from the 5').
-            allowed_lengths (list): List of seed length(s).
-            allowed_gu_wobbles (dict): For each seed length (key), how many GU
-                wobbles are allowed (value).
-            allowed_mismatches (dict): For each seed length (key), how many
-                mismatches are allowed (value).
-            take_best (bool): If seed matches are overlapping, taking or not
-                the longest.
-        """
         defaults = {
             'mirna_start_pairing': 2,
             'allowed_lengths': [6, 7, 8],
@@ -123,6 +110,20 @@ class mmSeed(object):
         self.__dict__.update(defaults)
         self.__dict__.update(kwargs)
 
+        self.target_seq = kwargs['target_seq'].upper()
+        self.mirna_seq = kwargs['mirna_seq'].upper()
+        self.len_target_seq = len(self.target_seq)
+        self.len_mirna_seq = len(self.mirna_seq)
+        self.min_target_length = kwargs.get('min_target_length',
+                                            self.len_mirna_seq)
+
+    def find_potential_targets_with_seed(self):
+        """
+        Searches for seed(s) in the target sequence.
+
+        Args:
+
+        """
         # Reset
         out = {
             'end_sites': [],

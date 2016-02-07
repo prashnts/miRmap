@@ -59,7 +59,15 @@ class mmProbBinomial(object):
 
   def __init__(self, seed, **kwargs):
     self.seed = seed
-    self.__dict__.update({'markov_order': 1})
+    alph = list(set(self.seed.target_seq))
+    self.__dict__.update({
+      'markov_order': 1,
+      'alphabet': alph,
+      'transitions': prob.get_transitions(self.seed.target_seq, alph, 1),
+      'motif_def': None,
+      'motif_upstream_extension': 0,
+      'motif_downstream_extension': 0,
+    })
     self.__dict__.update(kwargs)
 
   def _eval_prob_binomial(self):
