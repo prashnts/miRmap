@@ -129,7 +129,7 @@ class TestModel(BaseTestModel):
       warnings.simplefilter("always")
       obj = miRmap(seq_mrn="TEST", seq_mir="TEST")
       try:
-        self.assertIsInstance(w[-1].category, RuntimeWarning)
+        self.assertEqual(w[-1].category, RuntimeWarning)
         self.assertFalse(getattr(obj, '_thermodynamic', False))
       except (AssertionError, IndexError):
         self.assertIsInstance(
