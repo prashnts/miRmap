@@ -7,6 +7,7 @@ import mirmap
 from mirmap import targetscan, seed
 from tests.test_model import BaseTestModel
 
+
 class TestTargetScan(BaseTestModel):
   def setUp(self):
     _mirs = mirmap.utils.load_fasta('tests/input/hsa-miR-30a-3p.fa')
