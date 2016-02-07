@@ -1,15 +1,13 @@
 # -*- coding: utf-8 -*-
 
-import unittest
-
 from collections import namedtuple
 
 import mirmap
 
 from mirmap import targetscan, seed
+from tests.test_model import BaseTestModel
 
-
-class TestTargetScan(unittest.TestCase):
+class TestTargetScan(BaseTestModel):
   def setUp(self):
     _mirs = mirmap.utils.load_fasta('tests/input/hsa-miR-30a-3p.fa')
     _mrnas = mirmap.utils.load_fasta('tests/input/NM_024573.fa')
@@ -111,8 +109,8 @@ class TestTargetScan(unittest.TestCase):
     t1 = obj._eval_tgs_au()
     r1 = [-0.0501892775521989, -0.11318565255796981]
 
-    self.assertAlmostEqual(t1, r1, places=5)
-    self.assertAlmostEqual(obj.tgs_aus, r1, places=5)
+    self.assertAlmostEqualList(t1, r1)
+    self.assertAlmostEqualList(obj.tgs_aus, r1)
     self.assertAlmostEqual(obj.tgs_au, max(r1), places=5)
 
   def test_eval_tgs_position(self):
@@ -124,8 +122,8 @@ class TestTargetScan(unittest.TestCase):
     t1 = obj._eval_tgs_position()
     r1 = [-0.015256000000000002, -0.031904]
 
-    self.assertAlmostEqual(t1, r1, places=5)
-    self.assertAlmostEqual(obj.tgs_positions, r1, places=5)
+    self.assertAlmostEqualList(t1, r1)
+    self.assertAlmostEqualList(obj.tgs_positions, r1)
     self.assertAlmostEqual(obj.tgs_position, max(r1), places=5)
 
   def test_eval_tgs_pairing3p(self):
@@ -137,8 +135,8 @@ class TestTargetScan(unittest.TestCase):
     t1 = obj._eval_tgs_pairing3p()
     r1 = [0.003119999999999999, 0.051500000000000004]
 
-    self.assertAlmostEqual(t1, r1, places=5)
-    self.assertAlmostEqual(obj.tgs_pairing3ps, r1, places=5)
+    self.assertAlmostEqualList(t1, r1)
+    self.assertAlmostEqualList(obj.tgs_pairing3ps, r1)
     self.assertAlmostEqual(obj.tgs_pairing3p, max(r1), places=5)
 
   def test_eval_tgs_score(self):
@@ -164,8 +162,8 @@ class TestTargetScan(unittest.TestCase):
     t1 = obj._eval_tgs_score()
     r1 = [-0.07732527755219891, -0.2545896525579698]
 
-    self.assertAlmostEqual(t1, r1, places=5)
-    self.assertAlmostEqual(obj.tgs_scores, r1, places=5)
+    self.assertAlmostEqualList(t1, r1)
+    self.assertAlmostEqualList(obj.tgs_scores, r1)
     self.assertAlmostEqual(obj.tgs_score, max(r1), places=5)
 
   def test_routine(self):
@@ -183,16 +181,16 @@ class TestTargetScan(unittest.TestCase):
     obj.routine()
 
     raus = [-0.0501892775521989, -0.11318565255796981]
-    self.assertAlmostEqual(obj.tgs_aus, raus, places=5)
+    self.assertAlmostEqualList(obj.tgs_aus, raus)
 
     rpos = [-0.015256000000000002, -0.031904]
-    self.assertAlmostEqual(obj.tgs_positions, rpos, places=5)
+    self.assertAlmostEqualList(obj.tgs_positions, rpos)
 
     r3ps = [0.003119999999999999, 0.051500000000000004]
-    self.assertAlmostEqual(obj.tgs_pairing3ps, r3ps, places=5)
+    self.assertAlmostEqualList(obj.tgs_pairing3ps, r3ps)
 
     rscore = [-0.07732527755219891, -0.2545896525579698]
-    self.assertAlmostEqual(obj.tgs_scores, rscore, places=5)
+    self.assertAlmostEqualList(obj.tgs_scores, rscore)
 
   def test_properties(self):
     self.assertAlmostEqual(

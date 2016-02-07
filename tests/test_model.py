@@ -1,13 +1,19 @@
 # -*- coding: utf-8 -*-
 
 import unittest
+import warnings
 
 import mirmap
 
-from mirmap import seed, miRmap, utils
+from mirmap import seed, miRmap, utils, thermodynamics
+
+class BaseTestModel(unittest.TestCase):
+  def assertAlmostEqualList(self, l1, l2, places=5):
+    for v1, v2 in zip(*[l1, l2]):
+      self.assertAlmostEqual(v1, v2, places=places)
 
 
-class TestModel(unittest.TestCase):
+class TestModel(BaseTestModel):
   _mirs = mirmap.utils.load_fasta('tests/input/hsa-miR-30a-3p.fa')
   _mrnas = mirmap.utils.load_fasta('tests/input/NM_024573.fa')
   maxDiff = None
@@ -117,10 +123,45 @@ class TestModel(unittest.TestCase):
 
     self.assertIsInstance(temp.scores, list)
 
+  def test_warning_raised(self):
+    with warnings.catch_warnings(record=True) as w:
+      warnings.simplefilter("always")
+      obj = miRmap(seq_mrn="TEST", seq_mir="TEST")
+      try:
+        self.assertIsInstance(w[-1], EnvironmentError)
+        self.assertFalse(getattr(obj, '_thermodynamic', False))
+      except (AssertionError, IndexError):
+        self.assertIsInstance(
+          getattr(obj, '_thermodynamic'),
+          thermodynamics.mmThermo
+        )
+
+class TestRealModel(BaseTestModel):
+  maxDiff = None
+
   def test_score(self):
     _mirs = utils.load_fasta('tests/input/hsa-miR-30a-3p.fa')
     _mrnas = utils.load_fasta('tests/input/NM_024573.fa')
-    obj = miRmap(
-      seq_mrn=_mrnas['NM_024573'], seq_mir=_mirs['hsa-miR-30a-3p']
-    )
+    obj = miRmap(seq_mrn=_mrnas['NM_024573'],
+                 seq_mir=_mirs['hsa-miR-30a-3p'])
+    obj.routine()
 
+    self.assertAlmostEqualList(obj._target_scan.tgs_aus,
+                               [-0.05019, -0.11319], places=4)
+    self.assertAlmostEqualList(obj._target_scan.tgs_pairing3ps,
+                               [0.00312, 0.05150], places=4)
+    self.assertAlmostEqualList(obj._target_scan.tgs_positions,
+                               [-0.01526, -0.03190], places=4)
+    self.assertAlmostEqualList(obj._prob_binomial.prob_binomials,
+                               [0.07013, 0.83698], places=4)
+
+    try:
+      self.assertAlmostEqualList(obj._thermodynamic.dg_duplexs,
+                                 [-7.50000, -7.70000], places=4)
+      self.assertAlmostEqualList(obj._thermodynamic.dg_bindings,
+                                 [-8.48000, -8.79000], places=4)
+      self.assertAlmostEqualList(obj._thermodynamic.dg_opens,
+                                 [14.10000, 14.10000], places=4)
+    except AttributeError:
+      #: Validate if python-only model is used.
+      self.assertEqual(obj.model, 'python_only_seed')

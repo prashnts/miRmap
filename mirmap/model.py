@@ -136,7 +136,7 @@ class miRmap(object):
       warnings.warn((
         "RNAVienna not available, falling back to Python Only mode. "
         "Please Note that thermodynamic Values will NOT be available. "
-      ))
+      ), EnvironmentError)
       self.model = 'python_only_seed'
 
   @property
@@ -222,11 +222,12 @@ class miRmap(object):
       for k in self.display_order:
         if k in model:
           report_lines.append(
-            '  %-30s% .5f'%(self.model_maps[k], rgetattr(self, k + 's')[i])
+            '  %-30s% .5f' % (self.model_maps[k], rgetattr(self, k + 's')[i])
           )
 
-      report_lines.append(
-        '  %-30s% .5f'%("miRmap Score", self.scores[i])
-      )
+      #FIXME: miRmap Score is NOT representative, yet.
+      # report_lines.append(
+      #   '  %-30s% .5f' % ("miRmap Score", self.scores[i])
+      # )
 
     return "\n".join(report_lines)
