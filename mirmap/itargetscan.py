@@ -185,6 +185,7 @@ class mmTargetScan(object):
         # Reset
         self.tgs_aus = []
         # Helper function
+
         def binarize(c):
             if c == 'U' or c == 'A':
                 return 1.0
@@ -193,20 +194,48 @@ class mmTargetScan(object):
         # Compute
         for its in range(len(self.seed.end_sites)):
             end_site = self.seed.end_sites[its]
-            ts_type = get_targetscan_ts_type(self.seed_lengths[its], self.target_seq[end_site - 1])
-            if ts_type:
-                tts = ts_types[ts_type]
-                seq_up = self.target_seq[max(0, end_site + tts.up_shift - ca_window_length) : end_site + tts.up_shift]
-                seq_down = self.target_seq[end_site - 1 + tts.down_shift : min(self.len_target_seq, end_site + ca_window_length - 1 + tts.down_shift)]
+            try:
+                ts_type = self._targetscan_ts_type(
+                    self.seed.seed_lengths[its],
+                    self.seed.target_seq[end_site - 1]
+                )
+                tts = self.ts_types[ts_type]
+
+                sus = max(
+                    0,
+                    end_site + tts.up_shift - self.ca_window_length
+                )
+                sue = end_site + tts.up_shift
+                seq_up = self.seed.target_seq[sus:sue]
+
+                sds = end_site - 1 + tts.down_shift
+                sde = min(
+                    self.seed.len_target_seq,
+                    end_site + self.ca_window_length - 1 + tts.down_shift
+                )
+                seq_down = self.seed.target_seq[sds:sde]
+
                 wup = tts.ca_weights_up[len(tts.ca_weights_up) - len(seq_up):]
                 wdn = tts.ca_weights_down[:len(seq_down)]
-                content = sum(map(operator.div, map(binarize, seq_up), wup)) + sum(map(operator.div, map(binarize, seq_down), wdn))
-                content = content / (sum(map(operator.div, [1.]*len(wup), wup)) + sum(map(operator.div, [1.]*len(wdn), wdn)))
-                if with_correction:
-                    self.tgs_aus.append(content * tts.ca_fc_slope + tts.ca_fc_intercept - tts.fc_mean)
+
+                content = sum(
+                    sum(map(operator.div, map(binarize, seq_up), wup)),
+                    sum(map(operator.div, map(binarize, seq_down), wdn))
+                )
+
+                content /= sum(
+                    sum(map(operator.div, [1.0] * len(wup), wup)),
+                    sum(map(operator.div, [1.0] * len(wdn), wdn))
+                )
+
+                if self.with_correction:
+                    self.tgs_aus.append(sum(
+                        content * tts.ca_fc_slope,
+                        tts.ca_fc_intercept - tts.fc_mean
+                    ))
                 else:
                     self.tgs_aus.append(content)
-            else:
+            except ValueError:
                 self.tgs_aus.append(None)
 
     def eval_tgs_position(self, ts_types=None, with_correction=None):

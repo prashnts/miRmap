@@ -90,5 +90,16 @@ class TestTargetScan(unittest.TestCase):
     with self.assertRaises(AttributeError):
       obj.unwanted
 
+  def test_targetscan_ts_type(self):
+    obj = itargetscan.mmTargetScan(seed=self.seed)
+    self.assertEqual(obj._targetscan_ts_type(6, 'A'), '8mer')
+    self.assertEqual(obj._targetscan_ts_type(6, 'T'), '7mer-m8')
+    self.assertEqual(obj._targetscan_ts_type(7, 'A'), '7mer-A1')
+    self.assertEqual(obj._targetscan_ts_type(8, 'A'), '7mer-A1')
+    self.assertEqual(obj._targetscan_ts_type(7, 'T'), '6mer')
+
+    with self.assertRaises(ValueError):
+      obj._targetscan_ts_type(0, 'A')
+
   def test_eval_tgs_au(self):
     pass
