@@ -352,40 +352,41 @@ class mmTargetScan(object):
                 self.tgs_pairing3ps.append(None)
         return self.tgs_pairing3ps
 
-    def eval_tgs_score(self, ts_types=None, with_correction=None):
-        """Computes the *TargetScan* score combining *AU content*, *UTR position* and *3' pairing* scores.
+    def _eval_tgs_score(self):
+        """
+        Computes the *TargetScan* score combining *AU content*, *UTR position*
+        and *3' pairing* scores.
+        """
 
-           :param ts_types: Parameters by seed-type.
-           :type ts_types: object
-           :param with_correction: Apply the linear regression correction or not.
-           :type with_correction: bool"""
-        # Parameters
-        if ts_types is None:
-            ts_types = Defaults.ts_types
-        if with_correction is None:
-            with_correction = Defaults.with_correction
-        # Check (and run) dependencies
-        if hasattr(self, 'tgs_aus') is False:
-            self.eval_tgs_au()
-        if hasattr(self, 'tgs_pairing3ps') is False:
-            self.eval_tgs_pairing3p()
-        if hasattr(self, 'tgs_positions') is False:
-            self.eval_tgs_position()
         # Reset
         self.tgs_scores = []
         # Compute
-        for its in range(len(self.end_sites)):
-            end_site = self.end_sites[its]
-            ts_type = get_targetscan_ts_type(self.seed_lengths[its], self.target_seq[end_site - 1])
-            if ts_type:
-                tts = ts_types[ts_type]
-                try:
-                    if with_correction:
-                        self.tgs_scores.append(self.tgs_aus[its] + self.tgs_positions[its] + self.tgs_pairing3ps[its] + tts.fc_mean)
-                    else:
-                        self.tgs_scores.append(self.tgs_aus[its] + self.tgs_positions[its] + self.tgs_pairing3ps[its])
-                except TypeError:
-                    self.tgs_scores.append(None)
+        for its in range(len(self.seed.end_sites)):
+            end_site = self.seed.end_sites[its]
+            try:
+                ts_type = self._targetscan_ts_type(
+                    self.seed.seed_lengths[its],
+                    self.seed.target_seq[end_site - 1]
+                )
+                tts = self.ts_types[ts_type]
+                if self.with_correction:
+                    self.tgs_scores.append(sum([
+                        self.tgs_aus[its],
+                        self.tgs_positions[its],
+                        self.tgs_pairing3ps[its],
+                        tts.fc_mean]
+                    ))
+                else:
+                    self.tgs_scores.append(sum([
+                        self.tgs_aus[its],
+                        self.tgs_positions[its],
+                        self.tgs_pairing3ps[its]
+                    ]))
+            except AttributeError as e:
+                if 'mmTargetScan' in str(e):
+                    raise AttributeError("Routine Did not Run.")
+                self.tgs_scores.append(None)
+        return self.tgs_scores
 
     @property
     def tgs_au(self):
