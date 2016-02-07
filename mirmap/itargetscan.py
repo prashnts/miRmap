@@ -11,12 +11,13 @@
 
 import operator
 
-from mirmap import seed
+from collections import namedtuple
 
 try:
     operator.div = operator.truediv
 except AttributeError:
     pass
+
 
 def get_targetscan_ts_type(seed_length, nt1):
     """
@@ -35,6 +36,7 @@ def get_targetscan_ts_type(seed_length, nt1):
             ts_type = '6mer'
     return ts_type
 
+
 class TargetscanTSType(object):
     """TargetScan parameters for a target site type"""
     def __init__(self, **kwargs):
@@ -44,16 +46,152 @@ class TargetscanTSType(object):
         # pa_ ------------------ tgs_pairing3p
         self.__dict__.update(kwargs)
 
-class mmTargetScan(seed.mmSeed):
-    def eval_tgs_au(self, **kwargs):
-        """Computes the *AU content* score.
 
-           :param ts_types: Parameters by seed-type.
-           :type ts_types: object
-           :param ca_window_length: Sequence length to compute the score with.
-           :type ca_window_length: int
-           :param with_correction: Apply the linear regression correction or not.
-           :type with_correction: bool"""
+class mmTargetScan(object):
+    """
+    miRmap TargetScan.
+
+    Args:
+
+    """
+
+    def __init__(self, **kwargs):
+        self.__init_defaults()
+
+    def __init_defaults(self):
+        ts_types_builder = namedtuple('TSTypes', [
+            'name',
+            'up_shift',
+            'down_shift',
+            'fc_mean',
+            'ca_fc_slope',
+            'ca_fc_intercept',
+            'ca_weights_up',
+            'ca_weights_down',
+            'po_fc_slope',
+            'po_fc_intercept',
+            'pa_fc_slope',
+            'pa_fc_intercept',
+            'pa_mirna_seed_start',
+            'pa_mirna_seed_overhang',
+        ])
+
+        ts_t_default = {
+            '6mer': {
+                'name': '6mer',
+                'up_shift': -8,
+                'down_shift': 0,
+                'fc_mean': -0.015,
+                'ca_fc_slope': -0.241,
+                'ca_fc_intercept': 0.115,
+                'ca_weights_up': [
+                  31.0, 30.0, 29.0, 28.0, 27.0, 26.0, 25.0, 24.0, 23.0, 22.0,
+                  21.0, 20.0, 19.0, 18.0, 17.0, 16.0, 15.0, 14.0, 13.0, 12.0,
+                  11.0, 10.0,  9.0,  8.0,  7.0,  6.0,  5.0,  4.0,  3.0,  2.0
+                ],
+                'ca_weights_down': [
+                   2.0,  2.0,  3.0,  4.0,  5.0,  6.0,  7.0,  8.0,  9.0, 10.0,
+                  11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0,
+                  21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0
+                ],
+                'po_fc_slope': 0.000049,
+                'po_fc_intercept': -0.033,
+                'pa_fc_slope': -0.00278,
+                'pa_fc_intercept': -0.0091,
+                'pa_mirna_seed_start': 7,
+                'pa_mirna_seed_overhang': 1,
+            },
+            '7mer-A1': {
+                'name': '7mer-A1',
+                'up_shift': -8,
+                'down_shift': 1,
+                'fc_mean': -0.099,
+                'ca_fc_slope': -0.42,
+                'ca_fc_intercept': 0.137,
+                'ca_weights_up': [
+                  31.0, 30.0, 29.0, 28.0, 27.0, 26.0, 25.0, 24.0, 23.0, 22.0,
+                  21.0, 20.0, 19.0, 18.0, 17.0, 16.0, 15.0, 14.0, 13.0, 12.0,
+                  11.0, 10.0,  9.0,  8.0,  7.0,  6.0,  5.0,  4.0,  3.0,  2.0
+                ],
+                'ca_weights_down': [
+                   2.0,  3.0,  4.0,  5.0,  6.0,  7.0,  8.0,  9.0, 10.0, 11.0,
+                  12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0,
+                  22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0
+                ],
+                'po_fc_slope': 0.000072,
+                'po_fc_intercept': -0.131,
+                'pa_fc_slope': -0.0211,
+                'pa_fc_intercept': -0.053,
+                'pa_mirna_seed_start': 7,
+                'pa_mirna_seed_overhang': 1,
+            },
+            '7mer-m8': {
+                'name': '7mer-m8',
+                'up_shift': -8,
+                'down_shift': 0,
+                'fc_mean': -0.161,
+                'ca_fc_slope': -0.5,
+                'ca_fc_intercept': 0.108,
+                'ca_weights_up': [
+                  30.0, 29.0, 28.0, 27.0, 26.0, 25.0, 24.0, 23.0, 22.0, 21.0,
+                  20.0, 19.0, 18.0, 17.0, 16.0, 15.0, 14.0, 13.0, 12.0, 11.0,
+                  10.0,  9.0,  8.0,  7.0,  6.0,  5.0,  4.0,  3.0,  2.0,  1.0
+                ],
+                'ca_weights_down': [
+                   2.0,  2.0,  3.0,  4.0,  5.0,  6.0,  7.0,  8.0,  9.0, 10.0,
+                  11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0,
+                  21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0
+                ],
+                'po_fc_slope': 0.000091,
+                'po_fc_intercept': -0.198,
+                'pa_fc_slope': -0.031,
+                'pa_fc_intercept': -0.094,
+                'pa_mirna_seed_start': 8,
+                'pa_mirna_seed_overhang': 0,
+            },
+            '8mer': {
+                'name': '8mer',
+                'up_shift': -8,
+                'down_shift': 1,
+                'fc_mean': -0.31,
+                'ca_fc_slope': -0.64,
+                'ca_fc_intercept': 0.055,
+                'ca_weights_up': [
+                  30.0, 29.0, 28.0, 27.0, 26.0, 25.0, 24.0, 23.0, 22.0, 21.0,
+                  20.0, 19.0, 18.0, 17.0, 16.0, 15.0, 14.0, 13.0, 12.0, 11.0,
+                  10.0,  9.0,  8.0,  7.0,  6.0,  5.0,  4.0,  3.0,  2.0,  1.0
+                ],
+                'ca_weights_down': [
+                   2.0,  3.0,  4.0,  5.0,  6.0,  7.0,  8.0,  9.0, 10.0, 11.0,
+                  12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0,
+                  22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0
+                ],
+                'po_fc_slope': 0.000172,
+                'po_fc_intercept': -0.38,
+                'pa_fc_slope': -0.0041,
+                'pa_fc_intercept': -0.299,
+                'pa_mirna_seed_start': 8,
+                'pa_mirna_seed_overhang': 0,
+            }
+        }
+        ts_types = {k: ts_types_builder(**v) for k, v in ts_t_default.items()}
+
+        self.__dict__.update({
+            'with_correction': True,
+            'ca_window_length': 30,
+            'ts_types': ts_types
+        })
+
+    def _eval_tgs_au(self, **kwargs):
+        """
+        Computes the *AU content* score.
+
+        Args:
+           ts_types (object): Parameters by seed-type.
+           ca_window_length (int): Sequence length to compute the score with.
+           with_correction (bool): Apply the linear regression correction?
+        """
+
         # Parameters
         ts_types = kwargs.get('ts_types', Defaults.ts_types)
         ca_window_length = kwargs.get('ca_window_length',
@@ -255,106 +393,3 @@ class mmTargetScan(seed.mmSeed):
             self.eval_tgs_score()
         self._tgs_score = sum(self.tgs_scores)
         return self._tgs_score
-
-class Defaults(object):
-    with_correction = True
-    ca_window_length = 30
-    ts_types_defaults = {
-        '6mer': {
-            'name': '6mer',
-            'up_shift': -8,
-            'down_shift': 0,
-            'fc_mean': -0.015,
-            'ca_fc_slope': -0.241,
-            'ca_fc_intercept': 0.115,
-            'ca_weights_up': [
-              31.0, 30.0, 29.0, 28.0, 27.0, 26.0, 25.0, 24.0, 23.0, 22.0,
-              21.0, 20.0, 19.0, 18.0, 17.0, 16.0, 15.0, 14.0, 13.0, 12.0,
-              11.0, 10.0,  9.0,  8.0,  7.0,  6.0,  5.0,  4.0,  3.0,  2.0
-            ],
-            'ca_weights_down': [
-               2.0,  2.0,  3.0,  4.0,  5.0,  6.0,  7.0,  8.0,  9.0, 10.0,
-              11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0,
-              21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0
-            ],
-            'po_fc_slope': 0.000049,
-            'po_fc_intercept': -0.033,
-            'pa_fc_slope': -0.00278,
-            'pa_fc_intercept': -0.0091,
-            'pa_mirna_seed_start': 7,
-            'pa_mirna_seed_overhang': 1,
-        },
-        '7mer-A1': {
-            'name': '7mer-A1',
-            'up_shift': -8,
-            'down_shift': 1,
-            'fc_mean': -0.099,
-            'ca_fc_slope': -0.42,
-            'ca_fc_intercept': 0.137,
-            'ca_weights_up': [
-              31.0, 30.0, 29.0, 28.0, 27.0, 26.0, 25.0, 24.0, 23.0, 22.0,
-              21.0, 20.0, 19.0, 18.0, 17.0, 16.0, 15.0, 14.0, 13.0, 12.0,
-              11.0, 10.0,  9.0,  8.0,  7.0,  6.0,  5.0,  4.0,  3.0,  2.0
-            ],
-            'ca_weights_down': [
-               2.0,  3.0,  4.0,  5.0,  6.0,  7.0,  8.0,  9.0, 10.0, 11.0,
-              12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0,
-              22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0
-            ],
-            'po_fc_slope': 0.000072,
-            'po_fc_intercept': -0.131,
-            'pa_fc_slope': -0.0211,
-            'pa_fc_intercept': -0.053,
-            'pa_mirna_seed_start': 7,
-            'pa_mirna_seed_overhang': 1,
-        },
-        '7mer-m8': {
-            'name': '7mer-m8',
-            'up_shift': -8,
-            'down_shift': 0,
-            'fc_mean': -0.161,
-            'ca_fc_slope': -0.5,
-            'ca_fc_intercept': 0.108,
-            'ca_weights_up': [
-              30.0, 29.0, 28.0, 27.0, 26.0, 25.0, 24.0, 23.0, 22.0, 21.0,
-              20.0, 19.0, 18.0, 17.0, 16.0, 15.0, 14.0, 13.0, 12.0, 11.0,
-              10.0,  9.0,  8.0,  7.0,  6.0,  5.0,  4.0,  3.0,  2.0,  1.0
-            ],
-            'ca_weights_down': [
-               2.0,  2.0,  3.0,  4.0,  5.0,  6.0,  7.0,  8.0,  9.0, 10.0,
-              11.0, 12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0,
-              21.0, 22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0
-            ],
-            'po_fc_slope': 0.000091,
-            'po_fc_intercept': -0.198,
-            'pa_fc_slope': -0.031,
-            'pa_fc_intercept': -0.094,
-            'pa_mirna_seed_start': 8,
-            'pa_mirna_seed_overhang': 0,
-        },
-        '8mer': {
-            'name': '8mer',
-            'up_shift': -8,
-            'down_shift': 1,
-            'fc_mean': -0.31,
-            'ca_fc_slope': -0.64,
-            'ca_fc_intercept': 0.055,
-            'ca_weights_up': [
-              30.0, 29.0, 28.0, 27.0, 26.0, 25.0, 24.0, 23.0, 22.0, 21.0,
-              20.0, 19.0, 18.0, 17.0, 16.0, 15.0, 14.0, 13.0, 12.0, 11.0,
-              10.0,  9.0,  8.0,  7.0,  6.0,  5.0,  4.0,  3.0,  2.0,  1.0
-            ],
-            'ca_weights_down': [
-               2.0,  3.0,  4.0,  5.0,  6.0,  7.0,  8.0,  9.0, 10.0, 11.0,
-              12.0, 13.0, 14.0, 15.0, 16.0, 17.0, 18.0, 19.0, 20.0, 21.0,
-              22.0, 23.0, 24.0, 25.0, 26.0, 27.0, 28.0, 29.0, 30.0, 31.0
-            ],
-            'po_fc_slope': 0.000172,
-            'po_fc_intercept': -0.38,
-            'pa_fc_slope': -0.0041,
-            'pa_fc_intercept': -0.299,
-            'pa_mirna_seed_start': 8,
-            'pa_mirna_seed_overhang': 0,
-        }
-    }
-    ts_types = {k: TargetscanTSType(**v) for k, v in ts_types_defaults.items()}
