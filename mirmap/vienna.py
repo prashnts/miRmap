@@ -16,7 +16,19 @@ import re
 import subprocess
 import tempfile
 
-from shutil import which
+try:
+  from shutil import which
+except ImportError:
+  #: Workaround for Python2.
+  #: http://stackoverflow.com/a/9877856
+  import os
+
+  def which(pgm):
+    path = os.getenv('PATH')
+    for p in path.split(os.path.pathsep):
+      p = os.path.join(p, pgm)
+      if os.path.exists(p) and os.access(p, os.X_OK):
+        return p
 
 
 class RNAvienna(object):
