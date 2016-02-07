@@ -24,12 +24,23 @@ class mmTargetScan(object):
     miRmap TargetScan.
 
     Args:
-
+       ts_types (object): Parameters by seed-type.
+       ca_window_length (int): Sequence length to compute the score with.
+       with_correction (bool): Apply the linear regression correction?
     """
 
     def __init__(self, seed, **kwargs):
         self.seed = seed
         self.__init_defaults()
+        self.__init_args(**kwargs)
+
+    def __init_args(self, **kwargs):
+        allowed_args = [
+            'ca_window_length',
+            'with_correction',
+        ]
+        arg = {k: v for k, v in kwargs.items() if k in allowed_args}
+        self.__dict__.update(arg)
 
     def __init_defaults(self):
         ts_types_builder = namedtuple('TSTypes', [
@@ -166,22 +177,11 @@ class mmTargetScan(object):
 
         raise ValueError("seed_length should be >= 6.")
 
-    def _eval_tgs_au(self, **kwargs):
+    def _eval_tgs_au(self):
         """
         Computes the *AU content* score.
-
-        Args:
-           ts_types (object): Parameters by seed-type.
-           ca_window_length (int): Sequence length to compute the score with.
-           with_correction (bool): Apply the linear regression correction?
         """
 
-        # Parameters
-        ts_types = kwargs.get('ts_types', Defaults.ts_types)
-        ca_window_length = kwargs.get('ca_window_length',
-                                      Defaults.ca_window_length)
-        with_correction = kwargs.get('with_correction',
-                                     Defaults.with_correction)
         # Reset
         self.tgs_aus = []
         # Helper function
