@@ -1,11 +1,34 @@
-import mirmap
+from mirmap import miRmap
 
-_mirs = mirmap.utils.load_fasta('tests/input/hsa-miR-30a-3p.fa')
-_mrnas = mirmap.utils.load_fasta('tests/input/NM_024573.fa')
+seq_target = (
+  'GCUACAGUUUUUAUUUAGCAUGGGGAUUGCAGAGUGACCAGCAC'
+  'ACUGGACUCCGAGGUGGUUCAGACAAGACAGAGGGGAGCAGUGG'
+  'CCAUCAUCCUCCCGCCAGGAGCUUCUUCGUUCCUGCGCAUAUAG'
+  'ACUGUACAUUAUGAAGAAUACCCAGGAAGACUUUGUGACUGUCA'
+  'CUUGCUGCUUUUUCUGCGCUUCAGUAACAAGUGUUGGCAAACGA'
+  'GACUUUCUCCUGGCCCCUGCCUGCUGGAGAUCAGCAUGCCUGUC'
+  'CUUUCAGUCUGAUCCAUCCAUCUCUCUCUUGCCUGAGGGGAAAG'
+  'AGAGAUGGGCCAGGCAGAGAACAGAACUGGAGGCAGUCCAUCUA'
+)
 
-mim = mirmap.mm(_mrnas['NM_024573'], _mirs['hsa-miR-30a-3p'])
-mim.find_potential_targets_with_seed()
-mim.end_sites
-mim.tgs_au
-mim.prob_binomial
-print(mim.report())
+seq_mirna = 'UAGCAGCACGUAAAUAUUGGCG'
+
+ini = {
+  'seq_mir': seq_mirna,
+  'seq_mrn': seq_target,
+  'seed_args': {
+    'allowed_lengths': [6, 7],
+    'allowed_gu_wobbles': {6: 0, 7: 0},
+    'allowed_mismatches': {6: 0, 7: 0},
+    'take_best': True
+  },
+  'tscan_args': {
+    'with_correction': False
+  },
+  'prob_args': {
+  }
+}
+
+obj = miRmap(**ini)
+
+print(obj.report)

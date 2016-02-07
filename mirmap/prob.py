@@ -12,6 +12,8 @@ Basic functions for probability features:
     Transitions matrix, motif probability
 """
 
+from __future__ import division
+
 from mirmap import utils
 
 

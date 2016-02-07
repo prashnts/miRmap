@@ -9,6 +9,7 @@
 
 """TargetScan features."""
 
+from __future__ import division
 import operator
 
 from collections import namedtuple

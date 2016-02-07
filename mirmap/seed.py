@@ -97,7 +97,7 @@ class mmSeed(object):
             'allowed_lengths': [6, 7, 8],
             'allowed_gu_wobbles': {
                 6: 0,
-                7: 1,
+                7: 0,
                 8: 2
             },
             'allowed_mismatches': {
