@@ -132,8 +132,11 @@ class TestModel(BaseTestModel):
         getattr(obj, '_thermodynamic'),
         thermodynamics.mmThermo
       )
-    except RuntimeError:
+    except RuntimeWarning:
+      warnings.simplefilter("default")
+      obj = miRmap(seq_mrn="TEST", seq_mir="TEST")
       self.assertFalse(getattr(obj, '_thermodynamic', False))
+    warnings.simplefilter("default")
 
 class TestRealModel(BaseTestModel):
   maxDiff = None
