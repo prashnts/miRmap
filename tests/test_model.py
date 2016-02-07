@@ -138,6 +138,7 @@ class TestModel(BaseTestModel):
       self.assertFalse(getattr(obj, '_thermodynamic', False))
     warnings.simplefilter("default")
 
+
 class TestRealModel(BaseTestModel):
   maxDiff = None
 

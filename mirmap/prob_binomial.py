@@ -13,7 +13,7 @@ import functools
 import operator as op
 import math
 
-from mirmap import seed, prob
+from mirmap import seed, prob, utils
 
 try:
   #: Fix for Python 2
@@ -70,9 +70,8 @@ class mmProbBinomial(object):
     })
     self.__dict__.update(kwargs)
 
-  def _eval_prob_binomial(self):
-    # Reset
-    self.prob_binomials = []
+  def _eval_prob(self, worker):
+    prob_ev = []
     # Compute
     for its in range(len(self.seed.end_sites)):
       end_site = self.seed.end_sites[its]
@@ -85,8 +84,13 @@ class mmProbBinomial(object):
       )
 
       motif = self.seed.target_seq[start_motif - 1:end_motif]
+      prob_ev.append(worker(motif))
 
-      self.prob_binomials.append(sum([
+    return prob_ev
+
+  def _eval_prob_binomial(self):
+    def worker(motif):
+      return sum([
         1.0,
         -1 * binom_cdf(
           self.seed.target_seq.count(motif),
@@ -95,8 +99,22 @@ class mmProbBinomial(object):
             motif, self.alphabet, self.markov_order, self.transitions
           )
         )
-      ]))
+      ])
+    self.prob_binomials = self._eval_prob(worker)
     return self.prob_binomials
+
+  def _eval_prob_exact(self):
+    def worker(motif):
+      return get_exact_prob(
+        motif=utils.clean_seq(motif, self.alphabet),
+        nobs=self.target_seq.count(motif),
+        length_seq=self.len_target_seq,
+        alphabet=self.alphabet,
+        transitions=self.transitions,
+        markov_order=self.markov_order,
+        direction='o'
+      )
+    self.prob_binomials = self._eval_prob(worker)
 
   @property
   def prob_binomial(self):
