@@ -125,18 +125,15 @@ class TestModel(BaseTestModel):
     self.assertIsInstance(temp.scores, list)
 
   def test_warning_raised(self):
-    with warnings.catch_warnings(record=True) as w:
-      warnings.simplefilter("default")
+    warnings.simplefilter("error")
+    try:
       obj = miRmap(seq_mrn="TEST", seq_mir="TEST")
-      try:
-        self.assertEqual(w[-1].category, RuntimeWarning)
-        self.assertFalse(getattr(obj, '_thermodynamic', False))
-      except (AssertionError, IndexError):
-        self.assertIsInstance(
-          getattr(obj, '_thermodynamic'),
-          thermodynamics.mmThermo
-        )
-
+      self.assertIsInstance(
+        getattr(obj, '_thermodynamic'),
+        thermodynamics.mmThermo
+      )
+    except RuntimeError:
+      self.assertFalse(getattr(obj, '_thermodynamic', False))
 
 class TestRealModel(BaseTestModel):
   maxDiff = None
