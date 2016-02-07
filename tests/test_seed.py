@@ -4,30 +4,30 @@ import unittest
 
 import mirmap
 
-from mirmap import iseed
+from mirmap import seed
 
 
-class TestISeed(unittest.TestCase):
+class TestSeed(unittest.TestCase):
   _mirs = mirmap.utils.load_fasta('tests/input/hsa-miR-30a-3p.fa')
   _mrnas = mirmap.utils.load_fasta('tests/input/NM_024573.fa')
   maxDiff = None
 
   def test_init(self):
     with self.assertRaises(KeyError):
-      iseed.mmSeed()
-      iseed.mmSeed(target_seq="AUGC")
-      iseed.mmSeed(mirna_seq="AUGC")
+      seed.mmSeed()
+      seed.mmSeed(target_seq="AUGC")
+      seed.mmSeed(mirna_seq="AUGC")
 
-    temp = iseed.mmSeed(target_seq="augcaugc", mirna_seq="augc")
-    self.assertIsInstance(temp, iseed.mmSeed)
+    temp = seed.mmSeed(target_seq="augcaugc", mirna_seq="augc")
+    self.assertIsInstance(temp, seed.mmSeed)
     self.assertEqual(temp.target_seq, "AUGCAUGC")
     self.assertEqual(temp.mirna_seq, "AUGC")
     self.assertEqual(temp.min_target_length, len("AUGC"))
     self.assertEqual(temp.len_mirna_seq, len("AUGC"))
     self.assertEqual(temp.len_target_seq, len("AUGCAUGC"))
 
-    temp2 = iseed.mmSeed(target_seq="augc", mirna_seq="augc",
-                         min_target_length=2)
+    temp2 = seed.mmSeed(target_seq="augc", mirna_seq="augc",
+                        min_target_length=2)
     self.assertEqual(temp2.min_target_length, 2)
 
   def test_find_potential_targets_with_seed(self):
@@ -35,8 +35,8 @@ class TestISeed(unittest.TestCase):
       'target_seq': self._mrnas['NM_024573'],
       'mirna_seq': self._mirs['hsa-miR-30a-3p'],
     }
-    obj = iseed.mmSeed(**args)
-    self.assertIsInstance(obj, iseed.mmSeed)
+    obj = seed.mmSeed(**args)
+    self.assertIsInstance(obj, seed.mmSeed)
 
     r1 = obj.find_potential_targets_with_seed()
     ar1 = {
@@ -55,7 +55,7 @@ class TestISeed(unittest.TestCase):
       'allowed_mismatches': {6: 0, 7: 0, 8: 0},
       'take_best': False,
     }
-    obj = iseed.mmSeed(**args, **tar_1)
+    obj = seed.mmSeed(**args, **tar_1)
     tr1 = obj.find_potential_targets_with_seed()
     tr1_out = {
       'end_sites': [931, 931],
@@ -79,7 +79,7 @@ class TestISeed(unittest.TestCase):
       'allowed_mismatches': {6: 0, 7: 0, 8: 0},
       'take_best': False,
     }
-    obj = iseed.mmSeed(**args, **tar_2)
+    obj = seed.mmSeed(**args, **tar_2)
     tr2 = obj.find_potential_targets_with_seed()
     tr2_out = {
       'end_sites': [987, 987, 987],
@@ -103,7 +103,7 @@ class TestISeed(unittest.TestCase):
       'allowed_mismatches': {6: 0, 7: 0, 8: 0},
       'take_best': True,  #: Here.
     }
-    obj = iseed.mmSeed(**args, **tar_3)
+    obj = seed.mmSeed(**args, **tar_3)
     tr3 = obj.find_potential_targets_with_seed()
     tr3_out = {
       'end_sites': [931],
@@ -127,7 +127,7 @@ class TestISeed(unittest.TestCase):
       'allowed_mismatches': {6: 0, 7: 0, 8: 1},
       'take_best': False,
     }
-    obj = iseed.mmSeed(**args, **tar_4)
+    obj = seed.mmSeed(**args, **tar_4)
     tr4 = obj.find_potential_targets_with_seed()
     tr4_out = {
       'end_sites': [937, 931, 931, 931, 796, 236],

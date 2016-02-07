@@ -11,12 +11,14 @@
 
 from mirmap import utils
 
+
 def is_gu_wobble(b1, b2):
     """
     Check if 2 nts are a GU wobble if the first sequence was reverse
     complemented.
     """
     return (b1 == 'C' and b2 == 'U') or (b1 == 'A' and b2 == 'G')
+
 
 def find_pairings(target_subseq, mirna_seq, mirna_skip_start, mismatch_end):
     pairing = []
@@ -42,9 +44,11 @@ def find_pairings(target_subseq, mirna_seq, mirna_skip_start, mismatch_end):
     return (nb_mismatches_except_gu_wobbles, nb_gu_wobbles,
             pairing if mismatch_end else pairing[: last_pairing + 1])
 
-def get_motif_coordinates(end_site, motif_def, pairing,
-                          motif_upstream_extension, motif_downstream_extension,
-                          min_target_length):
+
+def get_motif_coordinates(
+        end_site, motif_def, pairing, motif_upstream_extension,
+        motif_downstream_extension, min_target_length
+    ):
     """
     Returns motif coordinates based on end_site (1-based)
     """
@@ -67,29 +71,27 @@ def get_motif_coordinates(end_site, motif_def, pairing,
     return start_motif, end_motif
 
 class mmSeed(object):
-    def __init__(self, target_seq, mirna_seq, min_target_length=None):
-        self.target_seq = target_seq.upper()
-        self.mirna_seq = mirna_seq.upper()
-        self.len_target_seq = len(self.target_seq)
-        self.len_mirna_seq = len(self.mirna_seq)
-        if min_target_length is None:
-            self.min_target_length = self.len_mirna_seq
+    """
+    miRmap Model Seed.
 
-    def find_potential_targets_with_seed(self, **kwargs):
-        """
-        Searches for seed(s) in the target sequence.
+    Args:
+        target_seq* (str): Target Sequence
+        mirna_seq* (str): miRNA Sequence
+        min_target_length (int): Target Length Threshold
 
-        Keyword Args:
-            mirna_start_pairing (int): Starting position of the seed in the
-                miRNA (from the 5').
-            allowed_lengths (list): List of seed length(s).
-            allowed_gu_wobbles (dict): For each seed length (key), how many GU
-                wobbles are allowed (value).
-            allowed_mismatches (dict): For each seed length (key), how many
-                mismatches are allowed (value).
-            take_best (bool): If seed matches are overlapping, taking or not
-                the longest.
-        """
+        mirna_start_pairing (int): Starting position of the seed in the
+            miRNA (from the 5').
+        allowed_lengths (list): List of seed length(s).
+        allowed_gu_wobbles (dict): For each seed length (key), how many GU
+            wobbles are allowed (value).
+        allowed_mismatches (dict): For each seed length (key), how many
+            mismatches are allowed (value).
+        take_best (bool): If seed matches are overlapping, taking or not
+            the longest.
+    *: Required
+    """
+
+    def __init__(self, **kwargs):
         defaults = {
             'mirna_start_pairing': 2,
             'allowed_lengths': [6, 7, 8],
@@ -108,12 +110,28 @@ class mmSeed(object):
         self.__dict__.update(defaults)
         self.__dict__.update(kwargs)
 
+        self.target_seq = kwargs['target_seq'].upper()
+        self.mirna_seq = kwargs['mirna_seq'].upper()
+        self.len_target_seq = len(self.target_seq)
+        self.len_mirna_seq = len(self.mirna_seq)
+        self.min_target_length = kwargs.get('min_target_length',
+                                            self.len_mirna_seq)
+
+    def find_potential_targets_with_seed(self):
+        """
+        Searches for seed(s) in the target sequence.
+
+        Args:
+
+        """
         # Reset
-        self.end_sites = []
-        self.seed_lengths = []
-        self.nb_mismatches_except_gu_wobbles = []
-        self.nb_gu_wobbles = []
-        self.pairings = []
+        out = {
+            'end_sites': [],
+            'seed_lengths': [],
+            'nb_mismatches_except_gu_wobbles': [],
+            'nb_gu_wobbles': [],
+            'pairings': [],
+        }
         # Compute
         target_seq_rc = utils.reverse_complement(self.target_seq)
 
@@ -144,11 +162,14 @@ class mmSeed(object):
                     # the real (=not the reverse-complemented) target sequence
                     end_site = (self.len_target_seq - i +
                                 self.mirna_start_pairing - 1)
-                    self.end_sites.append(end_site)
-                    self.seed_lengths.append(seed_length)
-                    self.nb_mismatches_except_gu_wobbles.append(
+                    out['end_sites'].append(end_site)
+                    out['seed_lengths'].append(seed_length)
+                    out['nb_mismatches_except_gu_wobbles'].append(
                         nb_mismatches_except_gu_wobbles)
-                    self.nb_gu_wobbles.append(nb_gu_wobbles)
-                    self.pairings.append(pairing)
+                    out['nb_gu_wobbles'].append(nb_gu_wobbles)
+                    out['pairings'].append(pairing)
                     if self.take_best:
                         break
+
+        self.__dict__.update(out)
+        return out

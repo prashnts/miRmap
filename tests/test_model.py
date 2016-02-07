@@ -4,10 +4,10 @@ import unittest
 
 import mirmap
 
-from mirmap import integrated_model, iseed
+from mirmap import seed, miRmap
 
 
-class TestIntegratedModel(unittest.TestCase):
+class TestModel(unittest.TestCase):
   _mirs = mirmap.utils.load_fasta('tests/input/hsa-miR-30a-3p.fa')
   _mrnas = mirmap.utils.load_fasta('tests/input/NM_024573.fa')
   maxDiff = None
@@ -15,12 +15,12 @@ class TestIntegratedModel(unittest.TestCase):
   def test_init(self):
     with self.assertRaises(TypeError):
       #: No Args
-      integrated_model.miRmap()
-      integrated_model.miRmap(seq_mir="TEST")
-      integrated_model.miRmap(seq_mrn="TEST")
+      miRmap()
+      miRmap(seq_mir="TEST")
+      miRmap(seq_mrn="TEST")
 
-    temp = integrated_model.miRmap(seq_mrn="TEST_MRN", seq_mir="TEST_MIR")
-    self.assertIsInstance(temp, integrated_model.miRmap, msg="Instance Ok")
+    temp = miRmap(seq_mrn="TEST_MRN", seq_mir="TEST_MIR")
+    self.assertIsInstance(temp, miRmap, msg="Instance Ok")
     self.assertEqual(temp.seq_mrn, "TEST_MRN", msg="mRNA Ok")
     self.assertEqual(temp.seq_mir, "TEST_MIR", msg="miRNA Ok")
 
@@ -33,8 +33,8 @@ class TestIntegratedModel(unittest.TestCase):
     self.assertEqual(temp.models.keys(), default_models.keys())
 
   def test_seed_init(self):
-    temp = integrated_model.miRmap(seq_mrn="augcaugc", seq_mir="augc")
-    self.assertIsInstance(temp._seed, iseed.mmSeed)
+    temp = miRmap(seq_mrn="augcaugc", seq_mir="augc")
+    self.assertIsInstance(temp._seed, seed.mmSeed)
     self.assertEqual(temp._seed.target_seq, "AUGCAUGC")
     self.assertEqual(temp._seed.mirna_seq, "AUGC")
     self.assertEqual(temp._seed.min_target_length, len("AUGC"))
@@ -45,7 +45,7 @@ class TestIntegratedModel(unittest.TestCase):
       'mirna_seq': 'cgua',            #: Wont be updated
       'min_target_length': 2          #: Will be updated
     }
-    temp = integrated_model.miRmap(
+    temp = miRmap(
       seq_mrn="augcaugc", seq_mir="augc", **temp_seed_args
     )
 
@@ -61,7 +61,7 @@ class TestIntegratedModel(unittest.TestCase):
     temp_seed_args['seed_args'] = {
       'min_target_length': 10          #: Will be updated
     }
-    temp = integrated_model.miRmap(
+    temp = miRmap(
       seq_mrn="augcaugc", seq_mir="augc", **temp_seed_args
     )
 
@@ -69,7 +69,7 @@ class TestIntegratedModel(unittest.TestCase):
     self.assertEqual(temp._seed.min_target_length, 10)
 
   def test_model_property(self):
-    temp = integrated_model.miRmap(seq_mrn="augcaugc", seq_mir="augc")
+    temp = miRmap(seq_mrn="augcaugc", seq_mir="augc")
 
     self.assertEqual(temp.model, 'python_only_seed')
     self.assertEqual(temp.model_select(6),
@@ -92,7 +92,7 @@ class TestIntegratedModel(unittest.TestCase):
       temp.model_select(2)
 
   def test_eval_score(self):
-    temp = integrated_model.miRmap(seq_mrn="TEST_MRN", seq_mir="TEST_MIR")
+    temp = miRmap(seq_mrn="TEST_MRN", seq_mir="TEST_MIR")
 
     with self.assertRaises(AttributeError):
       temp.scores
@@ -107,7 +107,7 @@ class TestIntegratedModel(unittest.TestCase):
       'seq_mrn': self._mrnas['NM_024573'],
       'seq_mir': self._mirs['hsa-miR-30a-3p'],
     }
-    obj = integrated_model.miRmap(**args)
+    obj = miRmap(**args)
     obj.routine()
 
     self.assertIsInstance(temp.scores, list)

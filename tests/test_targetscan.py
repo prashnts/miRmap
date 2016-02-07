@@ -6,7 +6,7 @@ from collections import namedtuple
 
 import mirmap
 
-from mirmap import itargetscan, iseed
+from mirmap import targetscan, seed
 
 
 class TestTargetScan(unittest.TestCase):
@@ -17,19 +17,19 @@ class TestTargetScan(unittest.TestCase):
       'target_seq': _mrnas['NM_024573'],
       'mirna_seq': _mirs['hsa-miR-30a-3p'],
     }
-    self.seed = iseed.mmSeed(**args)
+    self.seed = seed.mmSeed(**args)
     self.seed.find_potential_targets_with_seed()
 
   def test_init(self):
     with self.assertRaises(TypeError):
-      itargetscan.mmTargetScan()
+      targetscan.mmTargetScan()
 
-    obj = itargetscan.mmTargetScan(seed=self.seed)
-    self.assertIsInstance(obj, itargetscan.mmTargetScan)
+    obj = targetscan.mmTargetScan(seed=self.seed)
+    self.assertIsInstance(obj, targetscan.mmTargetScan)
     self.assertEqual(obj.seed, self.seed)
 
   def test_init_defaults(self):
-    obj = itargetscan.mmTargetScan(seed=self.seed)
+    obj = targetscan.mmTargetScan(seed=self.seed)
     self.assertEqual(obj.with_correction, True)
     self.assertEqual(obj.ca_window_length, 30)
     self.assertIsInstance(obj.ts_types, dict)
@@ -62,26 +62,26 @@ class TestTargetScan(unittest.TestCase):
                        type_val_tuple._fields)
 
   def test_init_args(self):
-    obj = itargetscan.mmTargetScan(
+    obj = targetscan.mmTargetScan(
       seed=self.seed,
       with_correction=False)
     self.assertEqual(obj.with_correction, False)
     self.assertEqual(obj.ca_window_length, 30)
 
-    obj = itargetscan.mmTargetScan(
+    obj = targetscan.mmTargetScan(
       seed=self.seed,
       with_correction=False,
       ca_window_length=10)
     self.assertEqual(obj.with_correction, False)
     self.assertEqual(obj.ca_window_length, 10)
 
-    obj = itargetscan.mmTargetScan(
+    obj = targetscan.mmTargetScan(
       seed=self.seed,
       ca_window_length=10)
     self.assertEqual(obj.with_correction, True)
     self.assertEqual(obj.ca_window_length, 10)
 
-    obj = itargetscan.mmTargetScan(
+    obj = targetscan.mmTargetScan(
       seed=self.seed,
       unwanted=True,
       ca_window_length=20)
@@ -92,7 +92,7 @@ class TestTargetScan(unittest.TestCase):
       obj.unwanted
 
   def test_targetscan_ts_type(self):
-    obj = itargetscan.mmTargetScan(seed=self.seed)
+    obj = targetscan.mmTargetScan(seed=self.seed)
     self.assertEqual(obj._targetscan_ts_type(6, 'A'), '8mer')
     self.assertEqual(obj._targetscan_ts_type(6, 'T'), '7mer-m8')
     self.assertEqual(obj._targetscan_ts_type(7, 'A'), '7mer-A1')
@@ -103,7 +103,7 @@ class TestTargetScan(unittest.TestCase):
       obj._targetscan_ts_type(0, 'A')
 
   def test_eval_tgs_au(self):
-    obj = itargetscan.mmTargetScan(seed=self.seed)
+    obj = targetscan.mmTargetScan(seed=self.seed)
 
     with self.assertRaises(AttributeError):
       obj.tgs_aus
@@ -116,7 +116,7 @@ class TestTargetScan(unittest.TestCase):
     self.assertEqual(obj.tgs_au, max(r1))
 
   def test_eval_tgs_position(self):
-    obj = itargetscan.mmTargetScan(seed=self.seed)
+    obj = targetscan.mmTargetScan(seed=self.seed)
 
     with self.assertRaises(AttributeError):
       obj.tgs_positions
@@ -129,7 +129,7 @@ class TestTargetScan(unittest.TestCase):
     self.assertEqual(obj.tgs_position, max(r1))
 
   def test_eval_tgs_pairing3p(self):
-    obj = itargetscan.mmTargetScan(seed=self.seed)
+    obj = targetscan.mmTargetScan(seed=self.seed)
 
     with self.assertRaises(AttributeError):
       obj.tgs_pairing3ps
@@ -142,7 +142,7 @@ class TestTargetScan(unittest.TestCase):
     self.assertEqual(obj.tgs_pairing3p, max(r1))
 
   def test_eval_tgs_score(self):
-    obj = itargetscan.mmTargetScan(seed=self.seed)
+    obj = targetscan.mmTargetScan(seed=self.seed)
 
     with self.assertRaises(AttributeError):
       obj.tgs_scores
@@ -169,7 +169,7 @@ class TestTargetScan(unittest.TestCase):
     self.assertEqual(obj.tgs_score, max(r1))
 
   def test_routine(self):
-    obj = itargetscan.mmTargetScan(seed=self.seed)
+    obj = targetscan.mmTargetScan(seed=self.seed)
 
     with self.assertRaises(AttributeError):
       obj.tgs_scores
@@ -196,18 +196,18 @@ class TestTargetScan(unittest.TestCase):
 
   def test_properties(self):
     self.assertEqual(
-      itargetscan.mmTargetScan(seed=self.seed).tgs_au,
+      targetscan.mmTargetScan(seed=self.seed).tgs_au,
       -0.0501892775521989
     )
     self.assertEqual(
-      itargetscan.mmTargetScan(seed=self.seed).tgs_position,
+      targetscan.mmTargetScan(seed=self.seed).tgs_position,
       0.0995
     )
     self.assertEqual(
-      itargetscan.mmTargetScan(seed=self.seed).tgs_pairing3p,
+      targetscan.mmTargetScan(seed=self.seed).tgs_pairing3p,
       0.051500000000000004
     )
     self.assertEqual(
-      itargetscan.mmTargetScan(seed=self.seed).tgs_score,
+      targetscan.mmTargetScan(seed=self.seed).tgs_score,
       -0.006569277552198908
     )

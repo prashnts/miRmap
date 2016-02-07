@@ -13,7 +13,7 @@ import functools
 import operator as op
 import math
 
-from mirmap import iseed, prob
+from mirmap import seed, prob
 
 try:
   #: Fix for Python 2
@@ -47,7 +47,7 @@ class mmProbBinomial(object):
   Computes the *P.over binomial* score.
 
   Args:
-    seed (iseed.mmSeed)*: Seed Instance
+    seed (seed.mmSeed)*: Seed Instance
     markov_order (int): Markov Chain order
     alphabet (list): List of nucleotides to consider in the sequences
       (others get filtered).
@@ -78,7 +78,7 @@ class mmProbBinomial(object):
       end_site = self.seed.end_sites[its]
 
       # start_motif and end_motif are sequence coordinates => 1-based
-      start_motif, end_motif = iseed.get_motif_coordinates(
+      start_motif, end_motif = seed.get_motif_coordinates(
         end_site, self.motif_def, self.seed.pairings[its],
         self.motif_upstream_extension, self.motif_downstream_extension,
         self.seed.min_target_length
