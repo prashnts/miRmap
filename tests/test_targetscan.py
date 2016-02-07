@@ -112,3 +112,14 @@ class TestTargetScan(unittest.TestCase):
     r1 = [-0.0501892775521989, -0.11318565255796981]
 
     self.assertEqual(t1, r1)
+
+  def test_eval_tgs_position(self):
+    obj = itargetscan.mmTargetScan(seed=self.seed)
+
+    with self.assertRaises(AttributeError):
+      obj.tgs_positions
+
+    t1 = obj._eval_tgs_position()
+    r1 = [0.055499999999999994, 0.0995]
+
+    self.assertEqual(t1, r1)

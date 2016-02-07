@@ -235,35 +235,40 @@ class mmTargetScan(object):
                 self.tgs_aus.append(None)
         return self.tgs_aus
 
-    def eval_tgs_position(self, ts_types=None, with_correction=None):
-        """Computes the *UTR position* score.
+    def _eval_tgs_position(self):
+        """
+        Computes the *UTR position* score.
+        """
 
-           :param ts_types: Parameters by seed-type.
-           :type ts_types: object
-           :param with_correction: Apply the linear regression correction or not.
-           :type with_correction: bool"""
-        # Parameters
-        if ts_types is None:
-            ts_types = Defaults.ts_types
-        if with_correction is None:
-            with_correction = Defaults.with_correction
         # Reset
         self.tgs_positions = []
         # Compute
-        for its in range(len(self.end_sites)):
-            end_site = self.end_sites[its]
-            ts_type = get_targetscan_ts_type(self.seed_lengths[its], self.target_seq[end_site - 1])
-            if ts_type:
-                tts = ts_types[ts_type]
-                closest_term = min(end_site + tts.up_shift, self.len_target_seq - end_site + tts.down_shift)
-                if closest_term > 1500:
-                    closest_term = 1500
-                if with_correction:
-                    self.tgs_positions.append(float(closest_term) * tts.po_fc_slope + tts.po_fc_intercept - tts.fc_mean)
+        for its in range(len(self.seed.end_sites)):
+            end_site = self.seed.end_sites[its]
+            try:
+                ts_type = self._targetscan_ts_type(
+                    self.seed.seed_lengths[its],
+                    self.seed.target_seq[end_site - 1]
+                )
+                tts = self.ts_types[ts_type]
+                closest_term = max(
+                    min(
+                        end_site + tts.up_shift,
+                        self.seed.len_target_seq - end_site + tts.down_shift
+                    ),
+                    1500
+                )
+
+                if self.with_correction:
+                    self.tgs_positions.append(sum([
+                        float(closest_term) * tts.po_fc_slope,
+                        tts.po_fc_intercept - tts.fc_mean
+                    ]))
                 else:
                     self.tgs_positions.append(float(closest_term))
-            else:
+            except ValueError:
                 self.tgs_positions.append(None)
+        return self.tgs_positions
 
     def eval_tgs_pairing3p(self, ts_types=None, with_correction=None):
         """Computes the *3' pairing* score.
