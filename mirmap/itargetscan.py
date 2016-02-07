@@ -19,34 +19,6 @@ except AttributeError:
     pass
 
 
-def get_targetscan_ts_type(seed_length, nt1):
-    """
-    Returns the target site type according to TargetScan terminology.
-    """
-    ts_type = None
-    if seed_length >= 7:
-        if nt1 == 'A':
-            ts_type = '8mer'
-        else:
-            ts_type = '7mer-m8'
-    elif seed_length == 6:
-        if nt1 == 'A':
-            ts_type = '7mer-A1'
-        else:
-            ts_type = '6mer'
-    return ts_type
-
-
-class TargetscanTSType(object):
-    """TargetScan parameters for a target site type"""
-    def __init__(self, **kwargs):
-        # tgs_au_up_shift and tgs_au_down_shift are set in reference to end_site
-        # ca_ are parameters for tgs_au
-        # po_ ------------------ tgs_position
-        # pa_ ------------------ tgs_pairing3p
-        self.__dict__.update(kwargs)
-
-
 class mmTargetScan(object):
     """
     miRmap TargetScan.
@@ -55,7 +27,8 @@ class mmTargetScan(object):
 
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, seed, **kwargs):
+        self.seed = seed
         self.__init_defaults()
 
     def __init_defaults(self):
@@ -182,6 +155,17 @@ class mmTargetScan(object):
             'ts_types': ts_types
         })
 
+    def _targetscan_ts_type(self, seed_length, nt1):
+        """
+        Returns the target site type according to TargetScan terminology.
+        """
+        if seed_length == 6:
+            return '8mer' if nt1 == 'A' else '7mer-m8'
+        elif seed_length >= 7:
+            return '7mer-A1' if nt1 == 'A' else '6mer'
+
+        raise ValueError("seed_length should be >= 6.")
+
     def _eval_tgs_au(self, **kwargs):
         """
         Computes the *AU content* score.
@@ -207,8 +191,8 @@ class mmTargetScan(object):
             else:
                 return 0.0
         # Compute
-        for its in range(len(self.end_sites)):
-            end_site = self.end_sites[its]
+        for its in range(len(self.seed.end_sites)):
+            end_site = self.seed.end_sites[its]
             ts_type = get_targetscan_ts_type(self.seed_lengths[its], self.target_seq[end_site - 1])
             if ts_type:
                 tts = ts_types[ts_type]

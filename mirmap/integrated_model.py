@@ -86,6 +86,9 @@ class miRmap(object):
     args.update(arg_init)
     self.__seed_m = iseed.mmSeed(**args)
 
+  def __init_targetscan(self, **args):
+    self.__target_scan(self, seed=self.__seed_m)
+
   @property
   def seed(self):
     return self.__seed_m
