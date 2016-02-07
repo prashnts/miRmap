@@ -126,7 +126,7 @@ class TestModel(BaseTestModel):
 
   def test_warning_raised(self):
     with warnings.catch_warnings(record=True) as w:
-      warnings.simplefilter("always")
+      warnings.simplefilter("default")
       obj = miRmap(seq_mrn="TEST", seq_mir="TEST")
       try:
         self.assertEqual(w[-1].category, RuntimeWarning)
