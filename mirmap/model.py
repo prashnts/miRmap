@@ -136,7 +136,7 @@ class miRmap(object):
       warnings.warn((
         "RNAVienna not available, falling back to Python Only mode. "
         "Please Note that thermodynamic Values will NOT be available. "
-      ), EnvironmentError)
+      ))
       self.model = 'python_only_seed'
 
   @property

@@ -7,6 +7,7 @@ import mirmap
 
 from mirmap import seed, miRmap, utils, thermodynamics
 
+
 class BaseTestModel(unittest.TestCase):
   def assertAlmostEqualList(self, l1, l2, places=5):
     for v1, v2 in zip(*[l1, l2]):
@@ -128,13 +129,14 @@ class TestModel(BaseTestModel):
       warnings.simplefilter("always")
       obj = miRmap(seq_mrn="TEST", seq_mir="TEST")
       try:
-        self.assertIsInstance(w[-1], EnvironmentError)
+        self.assertEqual(len(w), 1)
         self.assertFalse(getattr(obj, '_thermodynamic', False))
-      except (AssertionError, IndexError):
+      except AssertionError:
         self.assertIsInstance(
           getattr(obj, '_thermodynamic'),
           thermodynamics.mmThermo
         )
+
 
 class TestRealModel(BaseTestModel):
   maxDiff = None
