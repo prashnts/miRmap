@@ -66,10 +66,10 @@ class RNAvienna(object):
     )
 
     stdout, stderr = p.communicate(
-      '\n'.join(['&'.join(seqs), kwargs.get('constraints', '')])
+      '\n'.join(['&'.join(seqs), kwargs.get('constraints', '')]).encode()
     )
 
-    decoded = re.match(regex, stdout)
+    decoded = re.match(regex, stdout.decode())
     result = {}
     for k, v in decoded.groupdict().items():
       if 'structure' in k:

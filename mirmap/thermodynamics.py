@@ -56,11 +56,11 @@ class mmThermo(object):
         self.seed.seed_lengths[its]
       )
       b2 = (self.seed.end_sites[its] - (self.mirna_start_pairing - 1))
-      target_seed_seq = self.target_seq[a2:b2]
+      target_seed_seq = self.seed.target_seq[a2:b2]
 
       a3 = self.mirna_start_pairing - 1
       b3 = self.mirna_start_pairing + self.seed.seed_lengths[its] - 1
-      mirna_seed_seq = self.mirna_seq[a3:b3]
+      mirna_seed_seq = self.seed.mirna_seq[a3:b3]
 
       # Constraint sequence
       len_no_constraints = (
@@ -70,7 +70,7 @@ class mmThermo(object):
       )
       constraints_seq = (
         '.' * len_no_constraints +
-        gen_dot_bracket_notation(self.pairings[its]) +
+        gen_dot_bracket_notation(self.seed.pairings[its]) +
         '.' * len_no_constraints
       )
       # Co-folding of seed
@@ -87,7 +87,7 @@ class mmThermo(object):
 
       result = self.fold.cofold(
         target_site_seq,
-        self.mirna_seq,
+        self.seed.mirna_seq,
         constraints=constraints_seq,
         partfunc=True,
         temperature=self.temperature
@@ -166,11 +166,11 @@ class mmThermo(object):
         temperature=self.temperature
       )
       # dg1
-      result_dg1 = self.fold(
+      result_dg1 = self.fold.fold(
         seq_for_dg_open,
         constraints=constraints_seq,
         partfunc=True,
-        temperature=self.temperature
+        temperature=self.temperature,
       )
       # dg_open
       self.dg_opens.append(result_dg1['efe'] - result_dg0['efe'])
@@ -182,7 +182,7 @@ class mmThermo(object):
     """
     self.dg_totals = []
     # Compute
-    for its in range(len(self.end_sites)):
+    for its in range(len(self.seed.end_sites)):
       self.dg_totals.append(self.dg_duplexs[its] + self.dg_opens[its])
 
   def routine(self):

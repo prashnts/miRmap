@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
-from mirmap import seed, targetscan, prob_binomial
+import warnings
+
+from mirmap import seed, targetscan, prob_binomial, thermodynamics
 from mirmap.utils import rgetattr, gen_dot_pipe_notation
 
 
@@ -26,6 +28,7 @@ class miRmap(object):
     self.__init_seed(**kwargs.get('seed_args', {}))
     self.__init_targetscan(**kwargs.get('tscan_args', {}))
     self.__init_prob_binomial(**kwargs.get('prob_args', {}))
+    self.__init_thermodynamics(**kwargs.get('thermo_args', {}))
 
   def __init_models(self):
     """
@@ -33,33 +36,33 @@ class miRmap(object):
     """
     self.models = {
       'full_seed6': {
-          'tgs_au': -0.275016235769136,
-          'tgs_position': 5.43367028065211e-06,
-          'tgs_pairing3p': -0.00233278119760994,
-          'dg_duplex': 0.00772658898496047,
-          'dg_binding': -0.00303683833660696,
-          'dg_duplex_seed': 0.0496909801533612,
-          'dg_binding_seed': -0.048931930580652,
-          'dg_open': 0.000674676164622922,
-          'prob_exact': 0.16111635592018,
-          'prob_binomial': -0.0388333740708671,
-          'cons_bls': -0.00426314077593848,
-          'selec_phylop': -0.0112455248228072,
+          '_target_scan.tgs_au': -0.275016235769136,
+          '_target_scan.tgs_position': 5.43367028065211e-06,
+          '_target_scan.tgs_pairing3p': -0.00233278119760994,
+          '_thermodynamic.dg_duplex': 0.00772658898496047,
+          '_thermodynamic.dg_binding': -0.00303683833660696,
+          '_thermodynamic.dg_duplex_seed': 0.0496909801533612,
+          '_thermodynamic.dg_binding_seed': -0.048931930580652,
+          '_thermodynamic.dg_open': 0.000674676164622922,
+          # 'prob_exact': 0.16111635592018,
+          '_prob_binomial.prob_binomial': -0.0388333740708671,
+          # 'cons_bls': -0.00426314077593848,
+          # 'selec_phylop': -0.0112455248228072,
           'intercept': 0.148300586692704,
       },
       'full_seed7': {
-          'tgs_au': -0.402470212080983,
-          'tgs_position': 6.89249707831041e-05,
-          'tgs_pairing3p': -0.0129891251446967,
-          'dg_duplex': 0.0141332997802509,
-          'dg_binding': -0.0132159175462755,
-          'dg_duplex_seed': -0.0814445085121904,
-          'dg_binding_seed': 0.115558118311931,
-          'dg_open': 0.00331507347139685,
-          'prob_exact': 0.792962156550929,
-          'prob_binomial': -0.22119499646323,
-          'cons_bls': -0.0355840335642203,
-          'selec_phylop': -0.0127531995991629,
+          '_target_scan.tgs_au': -0.402470212080983,
+          '_target_scan.tgs_position': 6.89249707831041e-05,
+          '_target_scan.tgs_pairing3p': -0.0129891251446967,
+          '_thermodynamic.dg_duplex': 0.0141332997802509,
+          '_thermodynamic.dg_binding': -0.0132159175462755,
+          '_thermodynamic.dg_duplex_seed': -0.0814445085121904,
+          '_thermodynamic.dg_binding_seed': 0.115558118311931,
+          '_thermodynamic.dg_open': 0.00331507347139685,
+          # 'prob_exact': 0.792962156550929,
+          '_prob_binomial.prob_binomial': -0.22119499646323,
+          # 'cons_bls': -0.0355840335642203,
+          # 'selec_phylop': -0.0127531995991629,
           'intercept': 0.349448109979275,
       },
       'python_only_seed6': {
@@ -125,6 +128,17 @@ class miRmap(object):
   def __init_prob_binomial(self, **args):
     self._prob_binomial = prob_binomial.mmProbBinomial(self._seed, **args)
 
+  def __init_thermodynamics(self, **args):
+    try:
+      self._thermodynamic = thermodynamics.mmThermo(self._seed, **args)
+      self.model = 'full_seed'
+    except EnvironmentError:
+      warnings.warn((
+        "RNAVienna not available, falling back to Python Only mode. "
+        "Please Note that thermodynamic Values will NOT be available. "
+      ))
+      self.model = 'python_only_seed'
+
   @property
   def model(self):
     return self.__selected_model
@@ -144,6 +158,7 @@ class miRmap(object):
     self._seed.find_potential_targets_with_seed()
     self._target_scan.routine()
     self._prob_binomial._eval_prob_binomial()
+    self._thermodynamic.routine()
     self._eval_score()
 
   def _eval_score(self):
