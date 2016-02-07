@@ -55,7 +55,8 @@ class TestSeed(unittest.TestCase):
       'allowed_mismatches': {6: 0, 7: 0, 8: 0},
       'take_best': False,
     }
-    obj = seed.mmSeed(**args, **tar_1)
+    args.update(tar_1)
+    obj = seed.mmSeed(**args)
     tr1 = obj.find_potential_targets_with_seed()
     tr1_out = {
       'end_sites': [931, 931],
@@ -79,7 +80,8 @@ class TestSeed(unittest.TestCase):
       'allowed_mismatches': {6: 0, 7: 0, 8: 0},
       'take_best': False,
     }
-    obj = seed.mmSeed(**args, **tar_2)
+    args.update(tar_2)
+    obj = seed.mmSeed(**args)
     tr2 = obj.find_potential_targets_with_seed()
     tr2_out = {
       'end_sites': [987, 987, 987],
@@ -103,7 +105,8 @@ class TestSeed(unittest.TestCase):
       'allowed_mismatches': {6: 0, 7: 0, 8: 0},
       'take_best': True,  #: Here.
     }
-    obj = seed.mmSeed(**args, **tar_3)
+    args.update(tar_3)
+    obj = seed.mmSeed(**args)
     tr3 = obj.find_potential_targets_with_seed()
     tr3_out = {
       'end_sites': [931],
@@ -127,7 +130,8 @@ class TestSeed(unittest.TestCase):
       'allowed_mismatches': {6: 0, 7: 0, 8: 1},
       'take_best': False,
     }
-    obj = seed.mmSeed(**args, **tar_4)
+    args.update(tar_4)
+    obj = seed.mmSeed(**args)
     tr4 = obj.find_potential_targets_with_seed()
     tr4_out = {
       'end_sites': [937, 931, 931, 931, 796, 236],

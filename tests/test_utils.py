@@ -31,7 +31,7 @@ class TestUtils(unittest.TestCase):
     self.assertEqual(utils.clean_seq(dirty, alpha), clean)
 
   def test_load_fasta(self):
-    with self.assertRaises(FileNotFoundError):
+    with self.assertRaises(IOError):
       utils.load_fasta("NONEXISTENT.fa")
 
     fa = utils.load_fasta('tests/input/NM_024573.fa')
