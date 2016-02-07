@@ -168,6 +168,32 @@ class TestTargetScan(unittest.TestCase):
     self.assertEqual(obj.tgs_scores, r1)
     self.assertEqual(obj.tgs_score, max(r1))
 
+  def test_routine(self):
+    obj = itargetscan.mmTargetScan(seed=self.seed)
+
+    with self.assertRaises(AttributeError):
+      obj.tgs_scores
+    with self.assertRaises(AttributeError):
+      obj.tgs_positions
+    with self.assertRaises(AttributeError):
+      obj.tgs_pairing3ps
+    with self.assertRaises(AttributeError):
+      obj.tgs_scores
+
+    obj.routine()
+
+    raus = [-0.0501892775521989, -0.11318565255796981]
+    self.assertEqual(obj.tgs_aus, raus)
+
+    rpos = [0.055499999999999994, 0.0995]
+    self.assertEqual(obj.tgs_positions, rpos)
+
+    r3ps = [0.003119999999999999, 0.051500000000000004]
+    self.assertEqual(obj.tgs_pairing3ps, r3ps)
+
+    rscore = [-0.006569277552198908, -0.1231856525579698]
+    self.assertEqual(obj.tgs_scores, rscore)
+
   def test_properties(self):
     self.assertEqual(
       itargetscan.mmTargetScan(seed=self.seed).tgs_au,
