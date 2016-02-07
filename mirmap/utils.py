@@ -9,6 +9,7 @@
 
 """Common functions."""
 
+import collections
 import itertools
 import functools
 
@@ -45,11 +46,23 @@ def clean_seq(seq, alphabet):
   return seq
 
 
-def load_fasta(fasta):
-  with open(fasta) as minion:
-    rec = SeqIO.to_dict(SeqIO.parse(minion, "fasta"))
-    out = {k: str(v.seq) for k, v in rec.items()}
-    return out
+def load_fasta(fasta, as_string=False):
+  if as_string:
+    ff = fasta.split('\n')
+    seqs = collections.OrderedDict()
+    for line in ff:
+      line = line.strip()
+      if line.startswith('>'):
+        name_seq = line[1:].strip()
+        seqs[name_seq] = ''
+      else:
+        seqs[name_seq] += line.upper()
+    return seqs
+  else:
+    with open(fasta) as minion:
+      rec = SeqIO.to_dict(SeqIO.parse(minion, "fasta"))
+      out = {k: str(v.seq) for k, v in rec.items()}
+      return out
 
 
 def reverse_complement(seq):

@@ -2,7 +2,7 @@
 
 import warnings
 
-from mirmap import seed, targetscan, prob_binomial, thermodynamics
+from mirmap import seed, targetscan, prob_binomial, thermodynamics, evolution
 from mirmap.utils import rgetattr, gen_dot_pipe_notation
 
 
@@ -29,6 +29,7 @@ class miRmap(object):
     self.__init_targetscan(**kwargs.get('tscan_args', {}))
     self.__init_prob_binomial(**kwargs.get('prob_args', {}))
     self.__init_thermodynamics(**kwargs.get('thermo_args', {}))
+    self.__init_evolutionary(**kwargs.get('evol_args', {}))
 
   def __init_models(self):
     """
@@ -46,8 +47,8 @@ class miRmap(object):
           '_thermodynamic.dg_open': 0.000674676164622922,
           # 'prob_exact': 0.16111635592018,
           '_prob_binomial.prob_binomial': -0.0388333740708671,
-          # 'cons_bls': -0.00426314077593848,
-          # 'selec_phylop': -0.0112455248228072,
+          '_evolutionary.cons_bls': -0.00426314077593848,
+          '_evolutionary.selec_phylop': -0.0112455248228072,
           'intercept': 0.148300586692704,
       },
       'full_seed7': {
@@ -61,8 +62,8 @@ class miRmap(object):
           '_thermodynamic.dg_open': 0.00331507347139685,
           # 'prob_exact': 0.792962156550929,
           '_prob_binomial.prob_binomial': -0.22119499646323,
-          # 'cons_bls': -0.0355840335642203,
-          # 'selec_phylop': -0.0127531995991629,
+          '_evolutionary.cons_bls': -0.0355840335642203,
+          '_evolutionary.selec_phylop': -0.0127531995991629,
           'intercept': 0.349448109979275,
       },
       'python_only_seed6': {
@@ -70,7 +71,6 @@ class miRmap(object):
           '_target_scan.tgs_position': 9.44582844229299e-06,
           '_target_scan.tgs_pairing3p': -0.0111209267382849,
           '_prob_binomial.prob_binomial': 0.0701619992923641,
-          # 'cons_bls': -0.00646548621345819,
           'intercept': 0.121104869645859,
       },
       'python_only_seed7': {
@@ -78,7 +78,6 @@ class miRmap(object):
           '_target_scan.tgs_position': 6.34603935320321e-05,
           '_target_scan.tgs_pairing3p': -0.0207672870210752,
           '_prob_binomial.prob_binomial': 0.378665477250754,
-          # 'cons_bls': -0.0552713344740971,
           'intercept': 0.150015113841088,
       }
     }
@@ -93,8 +92,8 @@ class miRmap(object):
       '_target_scan.tgs_score':         'TargetScan score',
       'prob_exact':                     'Probability (Exact)',
       '_prob_binomial.prob_binomial':   'Probability (Binomial)',
-      'cons_bl':       'Conservation (BLS)',
-      'selec_phylop':   'Conservation (PhyloP)',
+      '_evolutionary.cons_bl':          'Conservation (BLS)',
+      '_evolutionary.selec_phylop':     'Conservation (PhyloP)',
     }
 
     self.display_order = [
@@ -108,8 +107,8 @@ class miRmap(object):
       '_target_scan.tgs_score',
       'prob_exact',
       '_prob_binomial.prob_binomial',
-      'cons_bl',
-      'selec_phylop',
+      '_evolutionary.cons_bl',
+      '_evolutionary.selec_phylop',
     ]
 
     self.model = 'python_only_seed'
@@ -139,6 +138,17 @@ class miRmap(object):
       ), RuntimeWarning)
       self.model = 'python_only_seed'
 
+  def __init_evolutionary(self, **args):
+    try:
+      self._evolutionary = evolution.mmEvolution(self._seed, **args)
+      self.model = 'full_seed'
+    except EnvironmentError:
+      warnings.warn((
+        "PHAST not available, falling back to Python Only mode. "
+        "Please Note that Evolutionary Values will NOT be available. "
+      ), RuntimeWarning)
+      self.model = 'python_only_seed'
+
   @property
   def model(self):
     return self.__selected_model
@@ -162,6 +172,10 @@ class miRmap(object):
       self._thermodynamic.routine()
     except AttributeError:
       #: Thermodynamic props. require RNAVienna.
+      pass
+    try:
+      self._evolutionary.routine()
+    except AttributeError:
       pass
     self._eval_score()
 
