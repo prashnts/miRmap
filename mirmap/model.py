@@ -81,29 +81,29 @@ class miRmap(object):
     }
     self.model_maps = {
       '_thermodynamic.dg_duplex':       'ΔG duplex (kcal/mol)',
-      '_thermodynamic.dg_bindings':     'ΔG binding (kcal/mol)',
-      '_thermodynamic.dg_opens':        'ΔG open (kcal/mol)',
-      '_thermodynamic.dg_totals':       'ΔG total (kcal/mol)',
-      '_target_scan.tgs_aus':           'AU content',
-      '_target_scan.tgs_pairing3ps':    '3\' pairing',
-      '_target_scan.tgs_scores':        'TargetScan score',
+      '_thermodynamic.dg_binding':      'ΔG binding (kcal/mol)',
+      '_thermodynamic.dg_open':         'ΔG open (kcal/mol)',
+      '_thermodynamic.dg_total':        'ΔG total (kcal/mol)',
+      '_target_scan.tgs_au':            'AU content',
+      '_target_scan.tgs_pairing3p':     '3\' pairing',
+      '_target_scan.tgs_score':         'TargetScan score',
       'prob_exact':                     'Probability (Exact)',
-      '_prob_binomial.prob_binomials':  'Probability (Binomial)',
-      'cons_bls':       'Conservation (BLS)',
+      '_prob_binomial.prob_binomial':   'Probability (Binomial)',
+      'cons_bl':       'Conservation (BLS)',
       'selec_phylop':   'Conservation (PhyloP)',
     }
 
     self.display_order = [
       '_thermodynamic.dg_duplex',
-      '_thermodynamic.dg_bindings',
-      '_thermodynamic.dg_opens',
-      '_thermodynamic.dg_totals',
-      '_target_scan.tgs_aus',
-      '_target_scan.tgs_pairing3ps',
-      '_target_scan.tgs_scores',
+      '_thermodynamic.dg_binding',
+      '_thermodynamic.dg_open',
+      '_thermodynamic.dg_total',
+      '_target_scan.tgs_au',
+      '_target_scan.tgs_pairing3p',
+      '_target_scan.tgs_score',
       'prob_exact',
-      '_prob_binomial.prob_binomials',
-      'cons_bls',
+      '_prob_binomial.prob_binomial',
+      'cons_bl',
       'selec_phylop',
     ]
 
@@ -171,11 +171,12 @@ class miRmap(object):
 
   @property
   def report(self):
-    if not self.scores:
+    if not getattr(self, 'score', False):
       self.routine()
 
     report_lines = []
-    for end_site, i in enumerate(self._seed.end_sites):
+    for i in range(len(self._seed.end_sites)):
+      end_site = self._seed.end_sites[i]
       start = max(0, end_site - self._seed.len_mirna_seq - 10)
       end = end_site + 10
       report_lines.append((
@@ -198,7 +199,13 @@ class miRmap(object):
       model = self.model_select(self._seed.seed_lengths[i])
 
       for k in self.display_order:
-        if k in model.keys():
-          report_lines.append('  %-30s% .5f'%(k, rgetattr(self, k)[i]))
+        if k in model:
+          report_lines.append(
+            '  %-30s% .5f'%(self.model_maps[k], rgetattr(self, k + 's')[i])
+          )
+
+      report_lines.append(
+        '  %-30s% .5f'%("miRmap Score", self.scores[i])
+      )
 
     return "\n".join(report_lines)

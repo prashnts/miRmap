@@ -4,7 +4,7 @@ import unittest
 
 import mirmap
 
-from mirmap import seed, miRmap
+from mirmap import seed, miRmap, utils
 
 
 class TestModel(unittest.TestCase):
@@ -111,3 +111,12 @@ class TestModel(unittest.TestCase):
     obj.routine()
 
     self.assertIsInstance(temp.scores, list)
+
+  def test_score(self):
+    _mirs = utils.load_fasta('tests/input/hsa-miR-30a-3p.fa')
+    _mrnas = utils.load_fasta('tests/input/NM_024573.fa')
+    obj = miRmap(
+      seq_mrn=_mrnas['NM_024573'], seq_mir=_mirs['hsa-miR-30a-3p']
+    )
+
+    print(obj.report)
