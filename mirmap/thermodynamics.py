@@ -208,8 +208,8 @@ class mmThermo(object):
 
   @property
   def dg_open(self):
-    return min(self.dg_open)
+    return min(self.dg_opens)
 
   @property
   def dg_total(self):
-    return min(self.dg_total)
+    return min(self.dg_totals)

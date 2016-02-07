@@ -35,7 +35,9 @@ class RNAvienna(object):
   def _fold(self, seqs, prog, **kwargs):
     cmd = [format(prog), "--noPS"]
     regex = r'.+\n(?P<mfe_structure>\S+) \((?P<mfe>.+)\)'
-    cmd.append(kwargs.get('constraints', ''))
+
+    if 'constraints' in kwargs:
+      cmd.append('--constraint')
 
     if kwargs.get('partfunc', False):
       cmd.append('--partfunc')
