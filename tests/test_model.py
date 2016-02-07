@@ -71,13 +71,18 @@ class TestModel(unittest.TestCase):
   def test_model_property(self):
     temp = miRmap(seq_mrn="augcaugc", seq_mir="augc")
 
-    self.assertEqual(temp.model, 'python_only_seed')
+    if getattr(temp, '_thermodynamic', False):
+      seed_def = 'full_seed'
+    else:
+      seed_def = 'python_only_seed'
+
+    self.assertEqual(temp.model, seed_def)
     self.assertEqual(temp.model_select(6),
-                     temp.models.get('python_only_seed6'))
+                     temp.models.get(seed_def + '6'))
     self.assertEqual(temp.model_select(7),
-                     temp.models.get('python_only_seed7'))
+                     temp.models.get(seed_def + '7'))
     self.assertEqual(temp.model_select(8),
-                     temp.models.get('python_only_seed7'))
+                     temp.models.get(seed_def + '7'))
 
     temp.model = 'full_seed'
     self.assertEqual(temp.model, 'full_seed')
@@ -119,4 +124,3 @@ class TestModel(unittest.TestCase):
       seq_mrn=_mrnas['NM_024573'], seq_mir=_mirs['hsa-miR-30a-3p']
     )
 
-    print(obj.report)

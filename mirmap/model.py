@@ -158,7 +158,11 @@ class miRmap(object):
     self._seed.find_potential_targets_with_seed()
     self._target_scan.routine()
     self._prob_binomial._eval_prob_binomial()
-    self._thermodynamic.routine()
+    try:
+      self._thermodynamic.routine()
+    except AttributeError:
+      #: Thermodynamic props. require RNAVienna.
+      pass
     self._eval_score()
 
   def _eval_score(self):
