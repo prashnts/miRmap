@@ -19,6 +19,42 @@ except AttributeError:
     pass
 
 
+def align_helper(utr_3p_seq, mir_3p_seq, mir_offset, utr_offset, overhang):
+    """
+    Helper Function.
+    """
+
+    score = 0
+    tempscore = 0
+    prevmatch = 0
+    i = 0
+    offset = max(mir_offset, utr_offset)
+    cutoff = min(len(mir_3p_seq) - mir_offset, len(utr_3p_seq) - utr_offset)
+    while i < cutoff:
+
+        m1 = i + utr_offset
+        m2 = i + mir_offset
+
+        if utr_3p_seq[m1] + mir_3p_seq[m2] in ['AU', 'UA', 'GC', 'CG']:
+            if prevmatch == 0:
+                tempscore = 0
+            tempscore += 1 if (4 <= i + mir_offset - overhang <= 7) else 0.5
+            prevmatch += 1
+        elif prevmatch >= 2:
+            if tempscore > score:
+                score = tempscore
+            tempscore = 0
+            prevmatch = 0
+        else:
+            tempscore = 0
+            prevmatch = 0
+        i += 1
+    if prevmatch >= 2 and tempscore > score:
+        score = tempscore
+    score -= max(0, ((offset - 2) / 2.0))
+    return score
+
+
 class mmTargetScan(object):
     """
     miRmap TargetScan.
@@ -270,77 +306,51 @@ class mmTargetScan(object):
                 self.tgs_positions.append(None)
         return self.tgs_positions
 
-    def eval_tgs_pairing3p(self, ts_types=None, with_correction=None):
-        """Computes the *3' pairing* score.
+    def _eval_tgs_pairing3p(self):
+        """
+        Computes the *3' pairing* score.
+        """
 
-           :param ts_types: Parameters by seed-type.
-           :type ts_types: object
-           :param with_correction: Apply the linear regression correction or not.
-           :type with_correction: bool"""
-        # Parameters
-        if ts_types is None:
-            ts_types = Defaults.ts_types
-        if with_correction is None:
-            with_correction = Defaults.with_correction
         # Reset
         self.tgs_pairing3ps = []
-        # Helper functions
-        def align(utr_3p_seq, mir_3p_seq, mir_offset, utr_offset, overhang):
-            score = 0
-            tempscore = 0
-            prevmatch = 0
-            bestmatch = 0
-            i = 0
-            offset = max(mir_offset, utr_offset)
-            while (i < len(mir_3p_seq) - mir_offset) and (i < len(utr_3p_seq) - utr_offset):
-                if (utr_3p_seq[i + utr_offset] == 'A' and mir_3p_seq[i + mir_offset] == 'U') or (utr_3p_seq[i + utr_offset] == 'U' and mir_3p_seq[i + mir_offset] == 'A') or (utr_3p_seq[i + utr_offset] == 'G' and mir_3p_seq[i + mir_offset] == 'C') or (utr_3p_seq[i + utr_offset] == 'C' and mir_3p_seq[i + mir_offset] == 'G'):
-                    if (i + mir_offset - overhang >= 4) and (i + mir_offset - overhang <= 7):
-                        if prevmatch == 0:
-                            tempscore = 0
-                        tempscore += 1
-                    else:
-                        if prevmatch == 0:
-                            tempscore = 0
-                        tempscore += .5
-                    prevmatch += 1
-                elif prevmatch >= 2:
-                    if tempscore > score:
-                        bestmatch = prevmatch
-                        score = tempscore
-                    tempscore = 0
-                    prevmatch = 0
-                else:
-                    tempscore = 0
-                    prevmatch = 0
-                i += 1
-            if prevmatch >= 2:
-                if tempscore > score:
-                    bestmatch = prevmatch
-                    score = tempscore
-                tempscore = 0
-                prevmatch = 0
-            score = score - max(0, ((offset - 2) / 2.0))
-            return score
         # Compute
-        for its in range(len(self.end_sites)):
-            end_site = self.end_sites[its]
-            ts_type = get_targetscan_ts_type(self.seed_lengths[its], self.target_seq[end_site - 1])
-            if ts_type:
-                tts = ts_types[ts_type]
-                utr_3p_seq = self.target_seq[max(0, end_site - tts.pa_mirna_seed_start - 15) : end_site - tts.pa_mirna_seed_start][::-1]
-                mir_3p_seq = self.mirna_seq[tts.pa_mirna_seed_start:]
+        for its in range(len(self.seed.end_sites)):
+            end_site = self.seed.end_sites[its]
+            try:
+                ts_type = self._targetscan_ts_type(
+                    self.seed.seed_lengths[its],
+                    self.seed.target_seq[end_site - 1]
+                )
+                tts = self.ts_types[ts_type]
+
+                uts = max(0, end_site - tts.pa_mirna_seed_start - 15)
+                ute = end_site - tts.pa_mirna_seed_start
+                utr_3p_seq = self.seed.target_seq[uts:ute][::-1]
+                mir_3p_seq = self.seed.mirna_seq[tts.pa_mirna_seed_start:]
                 maxscore = max(len(utr_3p_seq), len(mir_3p_seq))
                 scores_mir = []
                 scores_utr = []
                 for offset in range(maxscore):
-                    scores_mir.append(align(utr_3p_seq, mir_3p_seq, offset, 0, tts.pa_mirna_seed_overhang))
-                    scores_utr.append(align(utr_3p_seq, mir_3p_seq, 0, offset, tts.pa_mirna_seed_overhang))
-                if with_correction:
-                    self.tgs_pairing3ps.append(float(max(scores_mir + scores_utr)) * tts.pa_fc_slope + tts.pa_fc_intercept - tts.fc_mean)
+                    scores_mir.append(align_helper(
+                        utr_3p_seq, mir_3p_seq, offset, 0,
+                        tts.pa_mirna_seed_overhang)
+                    )
+                    scores_utr.append(align_helper(
+                        utr_3p_seq, mir_3p_seq, 0, offset,
+                        tts.pa_mirna_seed_overhang)
+                    )
+                if self.with_correction:
+                    self.tgs_pairing3ps.append(sum([
+                        float(max(scores_mir + scores_utr)) * tts.pa_fc_slope,
+                        tts.pa_fc_intercept - tts.fc_mean
+                    ]))
                 else:
-                    self.tgs_pairing3ps.append(float(max(scores_mir + scores_utr)))
-            else:
+                    self.tgs_pairing3ps.append(
+                        float(max(scores_mir + scores_utr))
+                    )
+            except ValueError:
                 self.tgs_pairing3ps.append(None)
+        return self.tgs_pairing3ps
 
     def eval_tgs_score(self, ts_types=None, with_correction=None):
         """Computes the *TargetScan* score combining *AU content*, *UTR position* and *3' pairing* scores.

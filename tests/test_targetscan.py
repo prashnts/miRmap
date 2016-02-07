@@ -123,3 +123,14 @@ class TestTargetScan(unittest.TestCase):
     r1 = [0.055499999999999994, 0.0995]
 
     self.assertEqual(t1, r1)
+
+  def test_eval_tgs_pairing3p(self):
+    obj = itargetscan.mmTargetScan(seed=self.seed)
+
+    with self.assertRaises(AttributeError):
+      obj.tgs_pairing3ps
+
+    t1 = obj._eval_tgs_pairing3p()
+    r1 = [0.003119999999999999, 0.051500000000000004]
+
+    self.assertEqual(t1, r1)
