@@ -391,31 +391,46 @@ class mmTargetScan(object):
     @property
     def tgs_au(self):
         """*AU content* score with default parameters."""
-        if hasattr(self, 'tgs_aus') is False:
-            self.eval_tgs_au()
-        self._tgs_au = max(self.tgs_aus)
-        return self._tgs_au
+        try:
+            tgs_au = max(self.tgs_aus)
+        except AttributeError:
+            self._eval_tgs_au()
+            tgs_au = max(self.tgs_aus)
+        finally:
+            return tgs_au
 
     @property
     def tgs_position(self):
         """*UTR position* score with default parameters."""
-        if hasattr(self, 'tgs_positions') is False:
-            self.eval_tgs_position()
-        self._tgs_position = min(self.tgs_positions)
-        return self._tgs_position
+        try:
+            tgs_positions = max(self.tgs_positions)
+        except AttributeError:
+            self._eval_tgs_position()
+            tgs_positions = max(self.tgs_positions)
+        finally:
+            return tgs_positions
 
     @property
     def tgs_pairing3p(self):
         """*3' pairing* score with default parameters."""
-        if hasattr(self, 'tgs_pairing3ps') is False:
-            self.eval_tgs_pairing3p()
-        self._tgs_pairing3p = max(self.tgs_pairing3ps)
-        return self._tgs_pairing3p
+        try:
+            tgs_pairing3ps = max(self.tgs_pairing3ps)
+        except AttributeError:
+            self._eval_tgs_pairing3p()
+            tgs_pairing3ps = max(self.tgs_pairing3ps)
+        finally:
+            return tgs_pairing3ps
 
     @property
     def tgs_score(self):
         """*TargetScan* score with default parameters."""
-        if hasattr(self, 'tgs_scores') is False:
-            self.eval_tgs_score()
-        self._tgs_score = sum(self.tgs_scores)
-        return self._tgs_score
+        try:
+            tgs_scores = max(self.tgs_scores)
+        except AttributeError:
+            self._eval_tgs_au()
+            self._eval_tgs_position()
+            self._eval_tgs_pairing3p()
+            self._eval_tgs_score()
+            tgs_scores = max(self.tgs_scores)
+        finally:
+            return tgs_scores
