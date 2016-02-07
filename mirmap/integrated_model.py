@@ -87,13 +87,13 @@ class miRmap(object):
       'mirna_seq': self.seq_mir
     }
     args.update(arg_init)
-    self._seed_m = iseed.mmSeed(**args)
+    self._seed = iseed.mmSeed(**args)
 
   def __init_targetscan(self, **args):
-    self._target_scan = itargetscan.mmTargetScan(self._seed_m, **args)
+    self._target_scan = itargetscan.mmTargetScan(self._seed, **args)
 
   def __init_prob_binomial(self, **args):
-    self._prob_binomial = prob_binomial.mmProbBinomial(self._seed_m, **args)
+    self._prob_binomial = prob_binomial.mmProbBinomial(self._seed, **args)
 
   @property
   def model(self):

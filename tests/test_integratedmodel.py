@@ -32,35 +32,41 @@ class TestIntegratedModel(unittest.TestCase):
     }
     self.assertEqual(temp.models.keys(), default_models.keys())
 
-  def test_seed_property(self):
+  def test_seed_init(self):
     temp = integrated_model.miRmap(seq_mrn="augcaugc", seq_mir="augc")
-    self.assertIsInstance(temp.seed, iseed.mmSeed)
-    self.assertEqual(temp.seed.target_seq, "AUGCAUGC")
-    self.assertEqual(temp.seed.mirna_seq, "AUGC")
-    self.assertEqual(temp.seed.min_target_length, len("AUGC"))
-    temp.seed = {
+    self.assertIsInstance(temp._seed, iseed.mmSeed)
+    self.assertEqual(temp._seed.target_seq, "AUGCAUGC")
+    self.assertEqual(temp._seed.mirna_seq, "AUGC")
+    self.assertEqual(temp._seed.min_target_length, len("AUGC"))
+
+    temp_seed_args = {}
+    temp_seed_args['seed_args'] = {
       'target_seq': 'augcaugcaugc',   #: Wont be updated
       'mirna_seq': 'cgua',            #: Wont be updated
       'min_target_length': 2          #: Will be updated
     }
+    temp = integrated_model.miRmap(
+      seq_mrn="augcaugc", seq_mir="augc", **temp_seed_args
+    )
 
-    self.assertNotEqual(temp.seed.target_seq, "AUGCAUGCAUGC")
-    self.assertNotEqual(temp.seed.mirna_seq, "CGUA")
+    self.assertNotEqual(temp._seed.target_seq, "AUGCAUGCAUGC")
+    self.assertNotEqual(temp._seed.mirna_seq, "CGUA")
 
-    self.assertEqual(temp.seed.target_seq, "AUGCAUGC")
-    self.assertEqual(temp.seed.mirna_seq, "AUGC")
+    self.assertEqual(temp._seed.target_seq, "AUGCAUGC")
+    self.assertEqual(temp._seed.mirna_seq, "AUGC")
 
-    self.assertNotEqual(temp.seed.min_target_length, len("AUGC"))
-    self.assertEqual(temp.seed.min_target_length, 2)
+    self.assertNotEqual(temp._seed.min_target_length, len("AUGC"))
+    self.assertEqual(temp._seed.min_target_length, 2)
 
-    temp.seed = {
-      'min_target_length': 10         #: Will be updated
+    temp_seed_args['seed_args'] = {
+      'min_target_length': 10          #: Will be updated
     }
-    self.assertNotEqual(temp.seed.min_target_length, len("AUGC"))
-    self.assertEqual(temp.seed.min_target_length, 10)
+    temp = integrated_model.miRmap(
+      seq_mrn="augcaugc", seq_mir="augc", **temp_seed_args
+    )
 
-    temp.seed = {}  #: Reset
-    self.assertEqual(temp.seed.min_target_length, len("AUGC"))
+    self.assertNotEqual(temp._seed.min_target_length, len("AUGC"))
+    self.assertEqual(temp._seed.min_target_length, 10)
 
   def test_model_property(self):
     temp = integrated_model.miRmap(seq_mrn="augcaugc", seq_mir="augc")
