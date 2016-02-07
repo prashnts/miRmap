@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from mirmap import iseed
-
+from mirmap import iseed, itargetscan
+from mirmap.utils import rgetattr
 
 class miRmap(object):
   """
@@ -23,6 +23,7 @@ class miRmap(object):
     self.__dict__.update(kwargs)
     self.__init_models()
     self.__init_seed(**kwargs.get('seed_args', {}))
+    self.__init_targetscan()
 
   def __init_models(self):
     """
@@ -60,18 +61,18 @@ class miRmap(object):
           'intercept': 0.349448109979275,
       },
       'python_only_seed6': {
-          'tgs_au': -0.275594504153219,
-          'tgs_position': 9.44582844229299e-06,
-          'tgs_pairing3p': -0.0111209267382849,
-          'prob_binomial': 0.0701619992923641,
+          '_target_scan.tgs_au': -0.275594504153219,
+          '_target_scan.tgs_position': 9.44582844229299e-06,
+          '_target_scan.tgs_pairing3p': -0.0111209267382849,
+          # 'prob_binomial': 0.0701619992923641,
           # 'cons_bls': -0.00646548621345819,
           'intercept': 0.121104869645859,
       },
       'python_only_seed7': {
-          'tgs_au': -0.443606032336791,
-          'tgs_position': 6.34603935320321e-05,
-          'tgs_pairing3p': -0.0207672870210752,
-          'prob_binomial': 0.378665477250754,
+          '_target_scan.tgs_au': -0.443606032336791,
+          '_target_scan.tgs_position': 6.34603935320321e-05,
+          '_target_scan.tgs_pairing3p': -0.0207672870210752,
+          # 'prob_binomial': 0.378665477250754,
           # 'cons_bls': -0.0552713344740971,
           'intercept': 0.150015113841088,
       }
@@ -87,7 +88,7 @@ class miRmap(object):
     self.__seed_m = iseed.mmSeed(**args)
 
   def __init_targetscan(self, **args):
-    self.__target_scan(self, seed=self.__seed_m)
+    self._target_scan = itargetscan.mmTargetScan(seed=self.__seed_m)
 
   @property
   def seed(self):
@@ -121,6 +122,7 @@ class miRmap(object):
   def routine(self, **kwargs):
     seed_targ = kwargs.get('arg_seed_tar', {})
     self.seed.find_potential_targets_with_seed(**seed_targ)
+    self._target_scan.routine()
     self._eval_score()
 
   def _eval_score(self):
@@ -136,6 +138,6 @@ class miRmap(object):
 
       for k, v in model.items():
         if k != 'intercept':
-          score += getattr(self.seed, k + 's')[i] * model[k]
+          score += rgetattr(self, k + 's')[i] * model[k]
 
       self.scores.append(score)

@@ -11,6 +11,7 @@
 
 import collections
 import itertools
+import functools
 
 try:
     # Python 3 support
@@ -71,3 +72,6 @@ def reverse_complement(seq):
         ttable = maketrans("ACGTacgt", "TGCAtgca")
     seq = seq[-1::-1].translate(ttable)
     return seq
+
+def rgetattr(obj, attr):
+    return functools.reduce(getattr, [obj]+attr.split('.'))

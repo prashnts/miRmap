@@ -85,7 +85,6 @@ class TestIntegratedModel(unittest.TestCase):
     with self.assertRaises(ValueError):
       temp.model_select(2)
 
-  @unittest.expectedFailure
   def test_eval_score(self):
     temp = integrated_model.miRmap(seq_mrn="TEST_MRN", seq_mir="TEST_MIR")
 

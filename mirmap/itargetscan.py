@@ -388,6 +388,12 @@ class mmTargetScan(object):
                 self.tgs_scores.append(None)
         return self.tgs_scores
 
+    def routine(self):
+        self._eval_tgs_au()
+        self._eval_tgs_position()
+        self._eval_tgs_pairing3p()
+        self._eval_tgs_score()
+
     @property
     def tgs_au(self):
         """*AU content* score with default parameters."""
@@ -427,10 +433,7 @@ class mmTargetScan(object):
         try:
             tgs_scores = max(self.tgs_scores)
         except AttributeError:
-            self._eval_tgs_au()
-            self._eval_tgs_position()
-            self._eval_tgs_pairing3p()
-            self._eval_tgs_score()
+            self.routine()
             tgs_scores = max(self.tgs_scores)
         finally:
             return tgs_scores
