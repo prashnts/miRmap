@@ -3,6 +3,7 @@
 from mirmap import iseed, itargetscan
 from mirmap.utils import rgetattr
 
+
 class miRmap(object):
   """
   miRmap Evaluation and Prediction model.

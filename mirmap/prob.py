@@ -7,7 +7,10 @@
 # See /LICENSE for more information.
 #
 
-"""Basic functions for probability features: Transitions matrix, motif probability..."""
+"""
+Basic functions for probability features:
+    Transitions matrix, motif probability
+"""
 
 from mirmap import utils
 

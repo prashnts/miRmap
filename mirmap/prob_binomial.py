@@ -13,16 +13,20 @@ import functools
 import operator as op
 import math
 
-from itertools import xrange
-
 from mirmap import iseed, prob
+
+try:
+  #: Fix for Python 2
+  range = xrange
+except NameError:
+  pass
 
 
 def nCr(n, r):
   r = min(r, n - r)
   if r <= 0:
     return 1
-  numer = functools.reduce(op.mul, xrange(n, n-r, -1))
+  numer = functools.reduce(op.mul, range(n, n-r, -1))
   denom = math.factorial(r)
   return numer//denom
 
