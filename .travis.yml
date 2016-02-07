@@ -13,3 +13,8 @@ script: "python -m unittest discover -s tests/"
 addons:
   code_climate:
     repo_token: 40d4cd55b9786a73f649eac5eb4d70f6d5749e7ef97af6988e1b9fc248af3f81
+notifications:
+  email:
+    recipients: prashant@ducic.ac.in
+    on_success: change
+    on_failure: change
