@@ -45,9 +45,10 @@ def find_pairings(target_subseq, mirna_seq, mirna_skip_start, mismatch_end):
             pairing if mismatch_end else pairing[: last_pairing + 1])
 
 
-def get_motif_coordinates(end_site, motif_def, pairing,
-                          motif_upstream_extension, motif_downstream_extension,
-                          min_target_length):
+def get_motif_coordinates(
+        end_site, motif_def, pairing, motif_upstream_extension,
+        motif_downstream_extension, min_target_length
+    ):
     """
     Returns motif coordinates based on end_site (1-based)
     """

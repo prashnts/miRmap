@@ -11,6 +11,7 @@
 
 from mirmap import utils
 
+
 def permutations(items, n):
     if n == 0:
         yield ''
@@ -18,6 +19,7 @@ def permutations(items, n):
         for i in range(len(items)):
             for base in permutations(items, n - 1):
                 yield str(items[i]) + str(base)
+
 
 def get_transitions(seq, alphabet, markov_order):
     """Computes transitions matrix"""
@@ -39,12 +41,13 @@ def get_transitions(seq, alphabet, markov_order):
             transitions[i] = [0.] * len(transitions[i])
     return transitions
 
+
 def prob_motif(motif, alphabet, markov_order, transitions):
     """Computes the probability of a motif based on a transitions matrix"""
     transitions = utils.flatten(transitions)
     motifs = list(permutations(alphabet, markov_order+1))
     motifs_index = dict([(motifs[i], i) for i in range(len(motifs))])
-    prob = 1.
+    prob = 1.0
     for i in range(len(motif) - markov_order):
         prob *= transitions[motifs_index[motif[i:i+markov_order+1]]]
     return prob
