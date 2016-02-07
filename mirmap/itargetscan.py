@@ -185,12 +185,8 @@ class mmTargetScan(object):
         # Reset
         self.tgs_aus = []
         # Helper function
+        binarize = lambda x: 1.0 if x in ['U', 'A'] else 0.0
 
-        def binarize(c):
-            if c == 'U' or c == 'A':
-                return 1.0
-            else:
-                return 0.0
         # Compute
         for its in range(len(self.seed.end_sites)):
             end_site = self.seed.end_sites[its]
@@ -218,25 +214,26 @@ class mmTargetScan(object):
                 wup = tts.ca_weights_up[len(tts.ca_weights_up) - len(seq_up):]
                 wdn = tts.ca_weights_down[:len(seq_down)]
 
-                content = sum(
+                content = sum([
                     sum(map(operator.div, map(binarize, seq_up), wup)),
                     sum(map(operator.div, map(binarize, seq_down), wdn))
-                )
+                ])
 
-                content /= sum(
+                content /= sum([
                     sum(map(operator.div, [1.0] * len(wup), wup)),
                     sum(map(operator.div, [1.0] * len(wdn), wdn))
-                )
+                ])
 
                 if self.with_correction:
-                    self.tgs_aus.append(sum(
+                    self.tgs_aus.append(sum([
                         content * tts.ca_fc_slope,
                         tts.ca_fc_intercept - tts.fc_mean
-                    ))
+                    ]))
                 else:
                     self.tgs_aus.append(content)
             except ValueError:
                 self.tgs_aus.append(None)
+        return self.tgs_aus
 
     def eval_tgs_position(self, ts_types=None, with_correction=None):
         """Computes the *UTR position* score.

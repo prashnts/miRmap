@@ -18,6 +18,7 @@ class TestTargetScan(unittest.TestCase):
       'mirna_seq': _mirs['hsa-miR-30a-3p'],
     }
     self.seed = iseed.mmSeed(**args)
+    self.seed.find_potential_targets_with_seed()
 
   def test_init(self):
     with self.assertRaises(TypeError):
@@ -34,7 +35,6 @@ class TestTargetScan(unittest.TestCase):
     self.assertIsInstance(obj.ts_types, dict)
 
     type_key = ['6mer', '7mer-A1', '7mer-m8', '8mer']
-    temp_keys = {_: None for _ in type_key}
 
     types_keys = [
       'name',
@@ -54,7 +54,8 @@ class TestTargetScan(unittest.TestCase):
     ]
     type_val_tuple = namedtuple('TSTypes', types_keys)
 
-    self.assertEqual(obj.ts_types.keys(), temp_keys.keys())
+    for key in type_key:
+      self.assertIn(key, obj.ts_types.keys())
 
     for key in obj.ts_types:
       self.assertEqual(obj.ts_types[key]._fields,
@@ -102,4 +103,12 @@ class TestTargetScan(unittest.TestCase):
       obj._targetscan_ts_type(0, 'A')
 
   def test_eval_tgs_au(self):
-    pass
+    obj = itargetscan.mmTargetScan(seed=self.seed)
+
+    with self.assertRaises(AttributeError):
+      obj.tgs_aus
+
+    t1 = obj._eval_tgs_au()
+    r1 = [-0.0501892775521989, -0.11318565255796981]
+
+    self.assertEqual(t1, r1)
