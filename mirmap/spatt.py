@@ -30,24 +30,33 @@ class Spatt(object):
   def get_exact_prob(self, **kwargs):
 
     cmd = [
-      'sspatt', '--format', '%a', '--pattern', kwargs['motif'],
-      '--nobs', str(kwargs['nobs']), '--seqlen', str(kwargs['length_seq']),
-      '--alphabet', ''.join(kwargs['alphabet']),
-      '-m', str(kwargs['markov_order'])
+      'sspatt',
+      # '--format', '%a',
+      '-c', str(kwargs['nobs']),
+      '-p', kwargs['motif'],
+      '-l', str(kwargs['length_seq']),
+      '-a', ''.join(kwargs['alphabet']),
+      '-m', str(kwargs['markov_order']),
+      '-d'
     ]
 
-    if kwargs['direction'] == 'o':
-      cmd.append('--over')
-    elif kwargs['direction'] == 'u':
-      cmd.append('--under')
+    # if kwargs['direction'] == 'o':
+    #   cmd.append('--over')
+    # elif kwargs['direction'] == 'u':
+    #   cmd.append('--under')
 
     markovf = tempfile.NamedTemporaryFile(mode='w')
     markovf.write('\n'.join(
       [' '.join(map(str, l)) for l in kwargs['transitions']]
     ))
     markovf.flush()
-    cmd.append('--Markov')
+    cmd.append('-M')
     cmd.append(markovf.name)
+
+    seqf = tempfile.NamedTemporaryFile(mode='w')
+    seqf.write(kwargs['motif'])
+    seqf.flush()
+    cmd.append(seqf.name)
 
     p = subprocess.Popen(
       cmd,
@@ -56,6 +65,8 @@ class Spatt(object):
     )
     stdout, stderr = p.communicate()
     markovf.close()
+    seqf.close()
+    print(stdout)
 
     reg = r'P\(N>=Nobs\)=(?P<prob>\S+)'
     decoded = re.search(reg, stdout.decode())

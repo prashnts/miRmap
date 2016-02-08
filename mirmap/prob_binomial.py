@@ -107,6 +107,7 @@ class mmProbBinomial(object):
     def worker(motif):
       try:
         return self.spatt.get_exact_prob(
+          seq=self.seed.mirna_seq,
           motif=utils.clean_seq(motif, self.alphabet),
           nobs=self.seed.target_seq.count(motif),
           length_seq=self.seed.len_target_seq,
