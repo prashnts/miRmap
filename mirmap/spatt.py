@@ -24,13 +24,13 @@ class Spatt(object):
   """
 
   def __init__(self):
-    if not which("phast"):
+    if not which("sspatt"):
       raise EnvironmentError("SPATT is required for Exact Probabilities.")
 
   def get_exact_prob(self, **kwargs):
 
     cmd = [
-      'spatt', '--format', '%a', '--pattern', kwargs['motif'],
+      'sspatt', '--format', '%a', '--pattern', kwargs['motif'],
       '--nobs', str(kwargs['nobs']), '--seqlen', str(kwargs['length_seq']),
       '--alphabet', ''.join(kwargs['alphabet']),
       '-m', str(kwargs['markov_order'])

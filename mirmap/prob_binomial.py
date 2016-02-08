@@ -105,16 +105,20 @@ class mmProbBinomial(object):
 
   def _eval_prob_exact(self):
     def worker(motif):
-      return get_exact_prob(
-        motif=utils.clean_seq(motif, self.alphabet),
-        nobs=self.target_seq.count(motif),
-        length_seq=self.len_target_seq,
-        alphabet=self.alphabet,
-        transitions=self.transitions,
-        markov_order=self.markov_order,
-        direction='o'
-      )
-    self.prob_binomials = self._eval_prob(worker)
+      try:
+        return self.spatt.get_exact_prob(
+          motif=utils.clean_seq(motif, self.alphabet),
+          nobs=self.seed.target_seq.count(motif),
+          length_seq=self.seed.len_target_seq,
+          alphabet=self.alphabet,
+          transitions=self.transitions,
+          markov_order=self.markov_order,
+          direction='o'
+        )
+      except AttributeError:
+        return 0
+    self.prob_exacts = self._eval_prob(worker)
+    return self.prob_exacts
 
   @property
   def prob_binomial(self):
@@ -123,3 +127,11 @@ class mmProbBinomial(object):
       return min(self.prob_binomials)
     except AttributeError:
       return min(self._eval_prob_binomial())
+
+  @property
+  def prob_exact(self):
+    """*P.over binomial* score with default parameters."""
+    try:
+      return min(self.prob_exacts)
+    except AttributeError:
+      return min(self._eval_prob_exact())
