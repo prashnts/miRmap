@@ -23,6 +23,7 @@ class TestProbBinomial(unittest.TestCase):
   def test_binomial_pdf(self):
     self.assertAlmostEqual(prob_binomial.binom_pmf(2, 4, 0.8), 0.15359, 4)
 
+
 class TestMmProbBinomial(unittest.TestCase):
   def setUp(self):
     _mirs = utils.load_fasta('tests/input/hsa-miR-30a-3p.fa')
@@ -57,6 +58,15 @@ class TestMmProbBinomial(unittest.TestCase):
     self.assertIsInstance(ob.prob_binomials, list)
     self.assertEqual(r, t)
     self.assertEqual(ob.prob_binomial, min(r))
+
+  @unittest.expectedFailure
+  def test_eval_prob_exact(self):
+    ob = prob_binomial.mmProbBinomial(self.seed, skip_exact=False)
+
+    with self.assertRaises(AttributeError):
+      ob.prob_exacts
+
+    self.assertIsInstance(ob.prob_exact, float)
 
   def test_properties(self):
     ob = prob_binomial.mmProbBinomial(self.seed)

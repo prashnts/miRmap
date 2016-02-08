@@ -4,6 +4,7 @@ import unittest
 
 from mirmap import prob
 
+
 class TestProb(unittest.TestCase):
   def test_permutations(self):
     items = ["A", "B", "C"]

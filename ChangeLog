@@ -1,3 +1,11 @@
+2016-02-08 Prashant Sinha <prashant@ducic.ac.in>
+
+    * miRmap pre-release 1.1.9
+
+    * Adds full compatibility to Python 2.7, 3.3, 3.4, 3.5
+
+    * Corrects many bugs
+
 2013-01-09 Charles E. Vejnar <charles.vejnar@unige.ch>
 
     * miRmap release 1.1

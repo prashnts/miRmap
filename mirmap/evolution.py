@@ -16,6 +16,7 @@ import dendropy
 
 from mirmap.phast import Phast
 
+
 def get_coord_vec(seq, alphabet, shift=None):
   if shift is None:
     shift = 1

@@ -4,8 +4,8 @@ import warnings
 
 from mirmap import (seed, targetscan, prob_binomial, thermodynamics,
                     evolution, spatt)
-from mirmap.utils import rgetattr, gen_dot_pipe_notation
-
+from mirmap.utils import (rgetattr, gen_dot_pipe_notation,
+                          rgetattrna, rgetattrze)
 
 class miRmap(object):
   """
@@ -177,7 +177,7 @@ class miRmap(object):
       return self.models.get(self.__selected_model + "7")
     raise ValueError("Count gotta be greater or equal to 6.")
 
-  def routine(self):
+  def routine(self, **kwargs):
     self._seed.find_potential_targets_with_seed()
     self._target_scan.routine()
     self._prob_binomial._eval_prob_binomial()
@@ -185,7 +185,6 @@ class miRmap(object):
     try:
       self._thermodynamic.routine()
     except AttributeError:
-      #: Thermodynamic props. require RNAVienna.
       pass
     try:
       self._evolutionary.routine()
@@ -206,7 +205,7 @@ class miRmap(object):
 
       for k, v in model.items():
         if k != 'intercept':
-          score += rgetattr(self, k + 's')[i] * model[k]
+          score += rgetattrze(self, k + 's')[i] * model[k]
 
       self.scores.append(score)
     return self.scores
@@ -250,7 +249,7 @@ class miRmap(object):
       for k in self.display_order:
         if k in model:
           report_lines.append(
-            '  %-30s% .5f' % (self.model_maps[k], rgetattr(self, k + 's')[i])
+            '  %-30s% .5f' % (self.model_maps[k], rgetattrna(self, k + 's')[i])
           )
 
       #FIXME: miRmap Score is NOT representative, yet.

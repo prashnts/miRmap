@@ -23,7 +23,6 @@ try:
   maketrans = ''.maketrans
 except (AttributeError, ImportError):
   # fallback for Python 2
-  from string import maketrans
   from itertools import izip_longest
   zip_longest = izip_longest
 
@@ -71,8 +70,18 @@ def reverse_complement(seq):
   return str(s)
 
 
-def rgetattr(obj, attr):
-  return functools.reduce(getattr, [obj]+attr.split('.'))
+def rgetattr(obj, attr, default=None):
+  try:
+    return functools.reduce(getattr, [obj]+attr.split('.'))
+  except AttributeError as e:
+    if default is not None:
+      return default
+    else:
+      raise e
+
+
+rgetattrna = lambda o, a: rgetattr(o, a, 'NaN')
+rgetattrze = lambda o, a: rgetattr(o, a, 0)
 
 
 def gen_dot_pipe_notation(pairing):

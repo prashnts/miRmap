@@ -67,6 +67,7 @@ class mmProbBinomial(object):
       'motif_def': None,
       'motif_upstream_extension': 0,
       'motif_downstream_extension': 0,
+      'skip_exact': True,
     })
     self.__dict__.update(kwargs)
 
@@ -105,6 +106,9 @@ class mmProbBinomial(object):
 
   def _eval_prob_exact(self):
     def worker(motif):
+      if self.skip_exact:
+        return 0
+
       try:
         return self.spatt.get_exact_prob(
           seq=self.seed.mirna_seq,
@@ -118,6 +122,7 @@ class mmProbBinomial(object):
         )
       except AttributeError:
         return 0
+
     self.prob_exacts = self._eval_prob(worker)
     return self.prob_exacts
 
