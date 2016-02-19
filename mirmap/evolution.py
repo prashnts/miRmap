@@ -89,6 +89,7 @@ class mmEvolution(object):
     }
     self.phast = Phast()
     self.__dict__.update(defaults)
+    self._routine_done = False
 
   def _eval_routine(self, setup, worker, **kwargs):
     # Parameters
@@ -251,6 +252,7 @@ class mmEvolution(object):
     except IOError:
       self.cons_blss = [0 for _ in range(len(self.seed.end_sites))]
       self.selec_phylops = [0 for _ in range(len(self.seed.end_sites))]
+    self._routine_done = True
 
   @property
   def cons_bls(self):

@@ -116,6 +116,7 @@ class mmSeed(object):
         self.len_mirna_seq = len(self.mirna_seq)
         self.min_target_length = kwargs.get('min_target_length',
                                             self.len_mirna_seq)
+        self._routine_done = False
 
     def find_potential_targets_with_seed(self):
         """
@@ -173,3 +174,7 @@ class mmSeed(object):
 
         self.__dict__.update(out)
         return out
+
+    def routine(self):
+        self.find_potential_targets_with_seed()
+        self._routine_done = True

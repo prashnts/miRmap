@@ -70,6 +70,7 @@ class mmProbBinomial(object):
       'skip_exact': True,
     })
     self.__dict__.update(kwargs)
+    self._routine_done = False
 
   def _eval_prob(self, worker):
     prob_ev = []
@@ -125,6 +126,11 @@ class mmProbBinomial(object):
 
     self.prob_exacts = self._eval_prob(worker)
     return self.prob_exacts
+
+  def routine(self):
+    self._eval_prob_binomial()
+    self._eval_prob_exact()
+    self._routine_done = True
 
   @property
   def prob_binomial(self):

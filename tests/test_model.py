@@ -215,3 +215,88 @@ class TestKnownScore(BaseTestModel):
     except AttributeError:
       #: Validate if python-only model is used.
       self.assertEqual(self.obj.model, 'python_only_seed')
+
+
+class TestPropertyAccess(BaseTestModel):
+  def setUp(self):
+    seq_target = (
+      'GCUACAGUUUUUAUUUAGCAUGGGGAUUGCAGAGUGACCAGCAC'
+      'ACUGGACUCCGAGGUGGUUCAGACAAGACAGAGGGGAGCAGUGG'
+      'CCAUCAUCCUCCCGCCAGGAGCUUCUUCGUUCCUGCGCAUAUAG'
+      'ACUGUACAUUAUGAAGAAUACCCAGGAAGACUUUGUGACUGUCA'
+      'CUUGCUGCUUUUUCUGCGCUUCAGUAACAAGUGUUGGCAAACGA'
+      'GACUUUCUCCUGGCCCCUGCCUGCUGGAGAUCAGCAUGCCUGUC'
+      'CUUUCAGUCUGAUCCAUCCAUCUCUCUCUUGCCUGAGGGGAAAG'
+      'AGAGAUGGGCCAGGCAGAGAACAGAACUGGAGGCAGUCCAUCUA'
+    )
+
+    seq_mirna = 'UAGCAGCACGUAAAUAUUGGCG'
+
+    self.init_args = {
+      'seq_mir': seq_mirna,
+      'seq_mrn': seq_target,
+      'seed_args': {
+        'allowed_lengths': [6, 7],
+        'allowed_gu_wobbles': {6: 0, 7: 0},
+        'allowed_mismatches': {6: 0, 7: 0},
+        'take_best': True
+      },
+      'tscan_args': {
+        'with_correction': False
+      },
+      'prob_args': {
+      }
+    }
+
+  def test_thermodynamic_features(self):
+    obj = miRmap(**self.init_args)
+    try:
+      expected = {
+        'dg_binding_seed': -10.68,
+        'dg_binding': -11.95,
+        'dg_open': 12.46,
+        'dg_duplex_seed': -10.1,
+        'dg_duplex': -13.8
+      }
+      out = obj.thermodynamic_features
+      self.assertEqual(out, expected)
+    except ValueError:
+      pass
+
+  def test_target_scan_features(self):
+    obj = miRmap(**self.init_args)
+    try:
+      expected = {
+        'tgs_au': 0.6411404871525753,
+        'tgs_pairing3p': 1.0,
+        'tgs_position': 166.0
+      }
+      out = obj.target_scan_features
+      self.assertEqual(out, expected)
+    except ValueError:
+      pass
+
+  @unittest.expectedFailure
+  def test_probability_features(self):
+    obj = miRmap(**self.init_args)
+    try:
+      expected = {
+        'prob_binomial': 0.03311825751646191,
+        'prob_exact': 0.06799
+      }
+      out = obj.probability_features
+      self.assertEqual(out, expected)
+    except ValueError:
+      pass
+
+  def test_evolutionary_features(self):
+    obj = miRmap(**self.init_args)
+    try:
+      expected = {
+        'cons_bls': 0,
+        'selec_phylop': 0
+      }
+      out = obj.evolutionary_features
+      self.assertEqual(out, expected)
+    except ValueError:
+      pass

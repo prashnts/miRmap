@@ -70,6 +70,7 @@ class mmTargetScan(object):
     self.seed = seed
     self.__init_defaults()
     self.__init_args(**kwargs)
+    self._routine_done = False
 
   def __init_args(self, **kwargs):
     allowed_args = [
@@ -392,6 +393,7 @@ class mmTargetScan(object):
     self._eval_tgs_position()
     self._eval_tgs_pairing3p()
     self._eval_tgs_score()
+    self._routine_done = True
 
   @property
   def tgs_au(self):

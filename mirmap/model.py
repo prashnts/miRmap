@@ -32,6 +32,7 @@ class miRmap(object):
     self.__init_prob_binomial(**kwargs.get('prob_args', {}))
     self.__init_thermodynamics(**kwargs.get('thermo_args', {}))
     self.__init_evolutionary(**kwargs.get('evol_args', {}))
+    self._routine_done = False
 
   def __init_models(self):
     """
@@ -177,10 +178,9 @@ class miRmap(object):
     raise ValueError("Count gotta be greater or equal to 6.")
 
   def routine(self, **kwargs):
-    self._seed.find_potential_targets_with_seed()
+    self._seed.routine()
     self._target_scan.routine()
-    self._prob_binomial._eval_prob_binomial()
-    self._prob_binomial._eval_prob_exact()
+    self._prob_binomial.routine()
     try:
       self._thermodynamic.routine()
     except AttributeError:
@@ -190,6 +190,7 @@ class miRmap(object):
     except AttributeError:
       pass
     self._eval_score()
+    self._routine_done = True
 
   def _eval_score(self):
     """
@@ -257,3 +258,67 @@ class miRmap(object):
       # )
 
     return "\n".join(report_lines)
+
+  @property
+  def thermodynamic_features(self):
+    try:
+      if not self._seed._routine_done is True:
+        self._seed.routine()
+      if not self._thermodynamic._routine_done is True:
+        self._thermodynamic.routine()
+    except AttributeError:
+      raise ValueError("Thermodynamic Features are not available.")
+    else:
+      return {
+        'dg_duplex': self._thermodynamic.dg_duplex,
+        'dg_binding': self._thermodynamic.dg_binding,
+        'dg_duplex_seed': self._thermodynamic.dg_duplex_seed,
+        'dg_binding_seed': self._thermodynamic.dg_binding_seed,
+        'dg_open': self._thermodynamic.dg_open,
+      }
+
+  @property
+  def target_scan_features(self):
+    try:
+      if not self._seed._routine_done:
+        self._seed.routine()
+      if not self._target_scan._routine_done:
+        self._target_scan.routine()
+    except AttributeError:
+      raise ValueError("TargetScan Features are not available.")
+    else:
+      return {
+        'tgs_au': self._target_scan.tgs_au,
+        'tgs_position': self._target_scan.tgs_position,
+        'tgs_pairing3p': self._target_scan.tgs_pairing3p,
+      }
+
+  @property
+  def probability_features(self):
+    try:
+      if not self._seed._routine_done:
+        self._seed.routine()
+      if not self._prob_binomial._routine_done:
+        self._prob_binomial.routine()
+    except AttributeError:
+      raise ValueError("Probability Features are not available.")
+    else:
+      return {
+        'prob_exact': self._prob_binomial.prob_exact,
+        'prob_binomial': self._prob_binomial.prob_binomial,
+      }
+
+  @property
+  def evolutionary_features(self):
+    try:
+      if not self._seed._routine_done:
+        self._seed.routine()
+      if not self._evolutionary._routine_done:
+        self._evolutionary.routine()
+    except AttributeError:
+      raise ValueError("Evolutionary Features are not available.")
+    else:
+      return {
+        'cons_bls': self._evolutionary.cons_bls,
+        'selec_phylop': self._evolutionary.selec_phylop,
+      }

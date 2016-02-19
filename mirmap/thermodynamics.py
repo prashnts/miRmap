@@ -36,6 +36,7 @@ class mmThermo(object):
     self.fold = RNAvienna()
     self.__dict__.update(defaults)
     self.__dict__.update(kwargs)
+    self._routine_done = False
 
   def _eval_dg_duplex(self):
     self.dg_duplex_seeds = []
@@ -189,6 +190,7 @@ class mmThermo(object):
     self._eval_dg_duplex()
     self._eval_dg_open()
     self._eval_dg_total()
+    self._routine_done = True
 
   @property
   def dg_duplex(self):
