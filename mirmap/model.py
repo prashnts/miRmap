@@ -113,7 +113,7 @@ class miRmap(object):
       '_evolutionary.selec_phylop',
     ]
 
-    self.model = 'python_only_seed'
+    self.model = 'full_seed'
 
   def __init_seed(self, **args):
     arg_init = {
@@ -134,7 +134,6 @@ class miRmap(object):
   def __init_thermodynamics(self, **args):
     try:
       self._thermodynamic = thermodynamics.mmThermo(self._seed, **args)
-      self.model = 'full_seed'
     except EnvironmentError:
       warnings.warn((
         "RNAVienna not available, falling back to Python Only mode. "
@@ -145,7 +144,6 @@ class miRmap(object):
   def __init_evolutionary(self, **args):
     try:
       self._evolutionary = evolution.mmEvolution(self._seed, **args)
-      self.model = 'full_seed'
     except EnvironmentError:
       warnings.warn((
         "PHAST not available, falling back to Python Only mode. "
@@ -161,6 +159,7 @@ class miRmap(object):
         "SPATT not available, falling back to Python Only mode. "
         "Please Note that Exact Probability Value will NOT be available. "
       ), RuntimeWarning)
+      self.model = 'python_only_seed'
 
   @property
   def model(self):

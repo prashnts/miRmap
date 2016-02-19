@@ -205,9 +205,13 @@ class TestKnownScore(BaseTestModel):
     self.obj.routine()
 
   def test_output(self):
-    self.assertAlmostEqual(max(self.obj._target_scan.tgs_aus),
-                           0.64114, places=4)
-    self.assertAlmostEqual(max(self.obj._thermodynamic.dg_bindings),
-                           -11.91708, places=1)
-    self.assertAlmostEqual(max(self.obj._thermodynamic.dg_opens),
-                           12.46000, places=1)
+    try:
+      self.assertAlmostEqual(max(self.obj._target_scan.tgs_aus),
+                             0.64114, places=4)
+      self.assertAlmostEqual(max(self.obj._thermodynamic.dg_bindings),
+                             -11.91708, places=1)
+      self.assertAlmostEqual(max(self.obj._thermodynamic.dg_opens),
+                             12.46000, places=1)
+    except AttributeError:
+      #: Validate if python-only model is used.
+      self.assertEqual(self.obj.model, 'python_only_seed')
